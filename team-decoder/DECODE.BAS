@@ -59,7 +59,7 @@ Sub SetTeamFieldIds
     teamFieldIds$(20) = "coach"
     teamFieldIds$(21) = "arena"
     teamFieldIds$(22) = "nickname"
-    teamFieldIds$(23) = "attEndance"
+    teamFieldIds$(23) = "attendance"
 End Sub
 
 ' =====================================================================================================================
