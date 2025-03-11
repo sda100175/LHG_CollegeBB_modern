@@ -29,9 +29,6 @@ Sub Main
     
     ' Output the data into a JSON file
     WriteOutputFile 
-
-    ' Close output file
-    CloseOutputFile
 End Sub
 
 ' =====================================================================================================================
