@@ -1,10 +1,13 @@
 ' Each Team record in BASK file is 655 bytes
 Const TEAM_SIZE_BYTES = 655
 
+' Each data record in COLBBTMS file is 574 bytes
+Const DATA_SIZE_BYTES = 574
+
 ' Team data array 
-Dim Shared teamData$(1000, 20)
+Dim Shared teamData$(1000, 25)
 Dim Shared playerData$(1000, 15, 15)
-Dim Shared teamFieldIds$(20)
+Dim Shared teamFieldIds$(25)
 Dim Shared playerFieldIds$(15)
 
 ' Number of teams for this season
@@ -14,22 +17,26 @@ numberTeams = 0
 Main 
 
 ' Exit program
-SYSTEM
+System
 
 
 ' =====================================================================================================================
 ' Starting point for the program, takes the year entered and coordinates the process of conversion.
-SUB Main
-    ' Read in the team names for given year
+Sub Main
+    ' Read in the team data for given year
     ReadTeamFile
-
+    ReadExtrasFile
+    
     ' Output the data into a JSON file
     WriteOutputFile 
-END SUB
+
+    ' Close output file
+    CloseOutputFile
+End Sub
 
 ' =====================================================================================================================
 ' Sets the field index to string mappimgs
-SUB SetTeamFieldIds
+Sub SetTeamFieldIds
     teamFieldIds$(1) = "teamStamina"
     teamFieldIds$(2) = "defFGPctAdj"
     teamFieldIds$(3) = "def3FGAvFGAAdj"
@@ -41,7 +48,7 @@ SUB SetTeamFieldIds
     teamFieldIds$(9) = "ifUsing99"
     teamFieldIds$(10) = "textColor"
     teamFieldIds$(11) = "backgroundColor"
-    teamFieldIds$(12) = "12"
+    teamFieldIds$(12) = "12"  ' no earthly clue what this is, usually always 999
     teamFieldIds$(13) = "teamFGAPerG"
     teamFieldIds$(14) = "leagueFGAPerG"
     teamFieldIds$(15) = "teamGamesPlayed"
@@ -49,11 +56,15 @@ SUB SetTeamFieldIds
     teamFieldIds$(17) = "wins"
     teamFieldIds$(18) = "losses"
     teamFieldIds$(19) = "powerRating"
-END SUB
+    teamFieldIds$(20) = "coach"
+    teamFieldIds$(21) = "arena"
+    teamFieldIds$(22) = "nickname"
+    teamFieldIds$(23) = "attEndance"
+End Sub
 
 ' =====================================================================================================================
 ' Sets the player field index to string mappimgs
-SUB SetPlayerFieldIds
+Sub SetPlayerFieldIds
     playerFieldIds$(1) = "adjFGPct"
     playerFieldIds$(2) = "ftPct"
     playerFieldIds$(3) = "defReb40Minx10"
@@ -68,11 +79,11 @@ SUB SetPlayerFieldIds
     playerFieldIds$(12) = "offReb40Minx10"
     playerFieldIds$(13) = "foulCommitRating"
     playerFieldIds$(14) = "foulDrawRating"
-END SUB
+End Sub
 
 ' =====================================================================================================================
 ' Writes data for a single team to the output JSON
-SUB WriteOneTeam (teamIdx)
+Sub WriteOneTeam (teamIdx)
     WriteToFile "   " + CHR$(34) + RTrim$(teamData$(teamIdx, 0)) + CHR$(34) + ": {"
 
     WriteToFile "      " + CHR$(34) + "name" + CHR$(34) + ": " + CHR$(34) + RTrim$(teamData$(teamIdx, 0)) + CHR$(34) + ","
@@ -80,6 +91,14 @@ SUB WriteOneTeam (teamIdx)
         value$ = STR$(CVI(teamData$(teamIdx, teamDataIdx)))
         WriteToFile "      " + CHR$(34) + teamFieldIds$(teamDataIdx) + CHR$(34) + ": " + value$ + ","
     Next teamDataIdx
+    For teamDataIdx = 20 To 22
+        value$ = RTrim$(teamData$(teamIdx, teamDataIdx))
+        WriteToFile "      " + CHR$(34) + teamFieldIds$(teamDataIdx) + CHR$(34) + ": " + CHR$(34) + value$ + CHR$(34) + ","
+    Next teamDataIdx
+
+    ' Attendance is a long (CVL)
+    value$ = STR$(CVL(teamData$(teamIdx, 23)))
+    WriteToFile "      " + CHR$(34) + teamFieldIds$(23) + CHR$(34) + ": " + value$ + ","
 
     WriteToFile "      " + CHR$(34) + "players" + CHR$(34) + ": ["
     For playerIdx = 0 To 13
@@ -103,12 +122,12 @@ SUB WriteOneTeam (teamIdx)
     WriteToFile "      ]"
 
     WriteToFile "   }"
-END SUB
+End Sub
 
 ' =====================================================================================================================
 ' Outputs the data arrays into a JSON formatted output file.
-SUB WriteOutputFile
-    SHARED numberTeams 
+Sub WriteOutputFile
+    Shared numberTeams 
 
     ' Open the output file (will be named TeamData.<year>.json)
     OpenOutputFile
@@ -129,16 +148,43 @@ SUB WriteOutputFile
 
     ' Close the output file
     CloseOutputFile
-END SUB 
+End Sub 
+
+' =====================================================================================================================
+' Reads the COLBBTMS.<year> file, which has some extra data (coach, nickname, etc). This is all combined.
+Sub ReadExtrasFile
+    Shared numberTeams
+
+    ' Team extras data (ED)
+    Dim TD$(5)
+
+    extrasFileName$ = "COLBBTMS." + COMMAND$
+
+    ' Opens COLBBTMS (extras) file for random access, sets record length (DATA_SIZE_BYTES)
+    Open extrasFileName$ For Random as #1 Len = DATA_SIZE_BYTES
+
+    ' Reads record data into the array
+    Field #1, 15 As TD$(0), 40 As TD$(1), 15 As TD$(2), 4 As TD$(3)
+
+    For teamIdx = 1 To numberTeams
+        Get #1, teamIdx
+
+        For teamDataIdx = 0 To 3
+            teamData$(teamIdx, teamDataIdx + 20) = TD$(teamDataIdx)
+        Next teamDataIdx
+    Next teamIdx
+
+    Close #1
+End Sub
 
 ' =====================================================================================================================
 ' Reads the BASK.<year> file, which has the team data. Output JSON uses those as the object indices.
-SUB ReadTeamFile
-    SHARED numberTeams
+Sub ReadTeamFile
+    Shared numberTeams
 
     ' Team data (TD) and player data (PD) arrays
-    DIM TD$(20)
-    DIM PD$(15,15)
+    Dim TD$(20)
+    Dim PD$(15,15)
 
     baskFileName$ = "BASK." + COMMAND$
 
@@ -181,25 +227,29 @@ SUB ReadTeamFile
     Next teamIdx
 
     Close #1
-END SUB
+End Sub
 
 ' =====================================================================================================================
 ' Clear any existing output file, then open for append writing
-SUB OpenOutputFile
+Sub OpenOutputFile
     outputFileName$ = "TeamData." + COMMAND$ + ".json"
-    OPEN outputFileName$ for OUTPUT AS #2
-    CLOSE #2
-    OPEN outputFileName$ for APPEND AS #2
-END SUB
+
+    ' Clear any existing file with this name
+    Open outputFileName$ for OUTPUT AS #2
+    Close #2
+
+    ' Open for append
+    Open outputFileName$ for APPEND AS #2
+End Sub
 
 ' =====================================================================================================================
 ' Write text to the output file, inserts newline after each call
-SUB WriteToFile (text$)
-    PRINT #2, text$
-END SUB
+Sub WriteToFile (text$)
+    Print #2, text$
+End Sub
 
 ' =====================================================================================================================
 ' Close the output file
-SUB CloseOutputFile
-    CLOSE #2
-END SUB
+Sub CloseOutputFile
+    Close #2
+End Sub
