@@ -4,3 +4,6 @@ originals
 **/COLBBTMS*
 **/*.exe
 **/TeamData*
+**/node_modules
+**/dist
+**/coverage
