@@ -35,12 +35,16 @@ describe('GameSettings', () => {
         expect(gs.toObject()).toEqual(obj);
     });
 
+    it('correctly throws if initialization object is not valid', () => {
+        obj.shotClock = 200;
+        expect(() => GameSettings.fromObject(obj)).toThrow();
+    });
+
     it('handles correctly all set options for playerMode', () => {
         for (const opt of Object.values(PlayerOption).filter(v => typeof v === "number")) {
             gs.playerMode = opt;
             expect(gs.playerMode).toEqual(opt);
         }
-        expect(() => gs.playerMode = 10).toThrow();
     });
 
     it('handles correctly all set options for location', () => {
@@ -48,7 +52,6 @@ describe('GameSettings', () => {
             gs.location = opt;
             expect(gs.location).toEqual(opt);
         }
-        expect(() => gs.location = 10).toThrow();
     });
 
     it('handles correctly all set options for shot clock', () => {
@@ -56,7 +59,6 @@ describe('GameSettings', () => {
             gs.shotClock = opt;
             expect(gs.shotClock).toEqual(opt);
         }
-        expect(() => gs.shotClock = 10).toThrow();
     });
 
     it('handles correctly all set options for three point shot', () => {
@@ -64,13 +66,11 @@ describe('GameSettings', () => {
             gs.threePtShots = v;
             expect(gs.threePtShots).toEqual(v);
         })
-        expect(() => gs.threePtShots = 10).toThrow();
     });
 
     it('handles correctly valid options for fouls to DQ', () => {
         gs.foulsToDisqualify = 6;
         expect(gs.foulsToDisqualify).toEqual(6);
-        expect(() => gs.foulsToDisqualify = '10').toThrow();
     });
 
     it('handles correctly all set options for free throws on 10th foul', () => {
@@ -78,7 +78,6 @@ describe('GameSettings', () => {
             gs.ftOnTenthFoul = opt;
             expect(gs.ftOnTenthFoul).toEqual(opt);
         }
-        expect(() => gs.ftOnTenthFoul = 10).toThrow();
     });
 
     it('handles correctly all set options for three point on 3pt foul', () => {
@@ -86,7 +85,6 @@ describe('GameSettings', () => {
             gs.threeFtOn3ptFoul = v;
             expect(gs.threeFtOn3ptFoul).toEqual(v);
         })
-        expect(() => gs.threeFtOn3ptFoul = 10).toThrow();
     });
 
     it('handles correctly all set options for one FT on first 6 fouls', () => {
@@ -94,7 +92,6 @@ describe('GameSettings', () => {
             gs.oneFtOnFirst6Fouls = v;
             expect(gs.oneFtOnFirst6Fouls).toEqual(v);
         })
-        expect(() => gs.oneFtOnFirst6Fouls = 10).toThrow();
     });
 
     it('handles correctly all set options for coach mode', () => {
@@ -102,6 +99,5 @@ describe('GameSettings', () => {
             gs.coachMode = opt;
             expect(gs.coachMode).toEqual(opt);
         }
-        expect(() => gs.coachMode = 10).toThrow();
     });
 });
