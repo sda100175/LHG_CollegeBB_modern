@@ -45,7 +45,7 @@ Sub SetTeamFieldIds
     teamFieldIds$(9) = "ifUsing99"
     teamFieldIds$(10) = "textColor"
     teamFieldIds$(11) = "backgroundColor"
-    teamFieldIds$(12) = "12"  ' no earthly clue what this is, usually always 999
+    teamFieldIds$(12) = "twelve"  ' no earthly clue what this is, usually always 999
     teamFieldIds$(13) = "teamFGAPerG"
     teamFieldIds$(14) = "leagueFGAPerG"
     teamFieldIds$(15) = "teamGamesPlayed"

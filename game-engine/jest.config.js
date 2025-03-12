@@ -7,4 +7,5 @@ module.exports = {
   collectCoverage: true, // Optional: Enable coverage reports
   coverageDirectory: "coverage",
   coveragePathIgnorePatterns: ["/node_modules/", "/dist/"],
+  setupFiles: ["<rootDir>/jest.setup.ts"]
 };
