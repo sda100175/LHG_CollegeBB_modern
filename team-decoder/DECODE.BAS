@@ -62,7 +62,7 @@ End Sub
 ' =====================================================================================================================
 ' Sets the player field index to string mappimgs
 Sub SetPlayerFieldIds
-    playerFieldIds$(1) = "adjFGPct"
+    playerFieldIds$(1) = "adjFgPct"
     playerFieldIds$(2) = "ftPct"
     playerFieldIds$(3) = "defReb40Minx10"
     playerFieldIds$(4) = "contribPct"
