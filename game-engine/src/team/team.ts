@@ -75,6 +75,9 @@ export class Team {
     @IsInt()
     attendance = 0;
 
+    @IsInt()
+    year = 0;
+
     @IsArray()
     @ValidateNested({ each: true })
     @Type(() => Player)
@@ -112,17 +115,14 @@ export class Team {
         t.arena = obj.arena;
         t.nickname = obj.nickname;
         t.attendance = obj.attendance;
+        t.year = obj.year;
 
         if (obj.players && typeof obj.players.length !== 'undefined') {
             t.players = obj.players.map((p: any) => Player.fromObject(p));
         }
 
-        const errors = validateSync(t);
-        if (errors.length > 0) {
-            throw new Error(`Team fromObject failed: ${errors}`);
-        } else {
-            return t;
-        }
+        t.validate();
+        return t;
     }
     
     /**
@@ -155,7 +155,15 @@ export class Team {
             arena: this.arena,
             nickname: this.nickname,
             attendance: this.attendance,
+            year: this.year,
             players: this.players.map(p => p.toObject())
         };
-    }        
+    }
+    
+    validate() {
+        const errors = validateSync(this);
+        if (errors.length) {
+            throw new Error(`Team object invalid: ${errors}`);
+        }
+    }
 }

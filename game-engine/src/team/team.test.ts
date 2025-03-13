@@ -30,6 +30,7 @@ describe('Team', () => {
             "arena": "PETE MARAVICH ASSEMBLY CENTER",
             "nickname": "TIGERS",
             "attendance":  16546,
+            "year":  1990,
             "players": [
                {
                   "name": "C.JACKSON",
@@ -299,6 +300,7 @@ describe('Team', () => {
         expect(t.arena).toEqual('PETE MARAVICH ASSEMBLY CENTER');
         expect(t.nickname).toEqual('TIGERS');
         expect(t.attendance).toEqual(16546);
+        expect(t.year).toEqual(1990);
 
         expect(t.players.length).toEqual(14);
         expect(t.players[2].name).toEqual("O'NEAL");

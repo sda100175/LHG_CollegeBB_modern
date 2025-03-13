@@ -70,12 +70,8 @@ export class Player {
         p.foulCommitRating = obj.foulCommitRating;
         p.foulDrawRating = obj.foulDrawRating;
 
-        const errors = validateSync(p);
-        if (errors.length > 0) {
-            throw new Error(`Player fromObject failed: ${errors}`);
-        } else {
-            return p;
-        }
+        p.validate();
+        return p;
     }
     
     /**
@@ -101,4 +97,11 @@ export class Player {
             foulDrawRating: this.foulDrawRating
         };
     }    
+
+    validate() {
+        const errors = validateSync(this);
+        if (errors.length) {
+            throw new Error(`Player object invalid: ${errors}`);
+        }
+    }
 }

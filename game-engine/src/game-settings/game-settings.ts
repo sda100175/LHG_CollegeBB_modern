@@ -77,12 +77,8 @@ export class GameSettings {
         gs.oneFtOnFirst6Fouls = obj.oneFtOnFirst6Fouls;
         gs.coachMode = obj.coachMode;
 
-        const errors = validateSync(gs);
-        if (errors.length > 0) {
-            throw new Error(`GameSettings fromObject failed: ${errors}`);
-        } else {
-            return gs;
-        }
+        gs.validate();
+        return gs;
     }
 
     /**
@@ -101,5 +97,12 @@ export class GameSettings {
             oneFtOnFirst6Fouls: this.oneFtOnFirst6Fouls,
             coachMode: this.coachMode
         };
+    }
+
+    validate() {
+        const errors = validateSync(this);
+        if (errors.length) {
+            throw new Error(`GameSettings object invalid: ${errors}`);
+        }
     }
 }

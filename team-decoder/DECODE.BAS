@@ -84,6 +84,7 @@ Sub WriteOneTeam (teamIdx)
     WriteToFile "   " + CHR$(34) + RTrim$(teamData$(teamIdx, 0)) + CHR$(34) + ": {"
 
     WriteToFile "      " + CHR$(34) + "name" + CHR$(34) + ": " + CHR$(34) + RTrim$(teamData$(teamIdx, 0)) + CHR$(34) + ","
+    WriteToFile "      " + CHR$(34) + "year" + CHR$(34) + ": " + COMMAND$ + ","
     For teamDataIdx = 1 To 19
         value$ = STR$(CVI(teamData$(teamIdx, teamDataIdx)))
         WriteToFile "      " + CHR$(34) + teamFieldIds$(teamDataIdx) + CHR$(34) + ": " + value$ + ","
