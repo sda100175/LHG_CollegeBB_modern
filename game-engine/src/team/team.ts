@@ -1,4 +1,4 @@
-import { IsArray, IsInt, IsString, ValidateNested, validateSync } from "class-validator"
+import { IsArray, IsBoolean, IsInt, IsString, ValidateNested, validateSync } from "class-validator"
 import { Player } from "../player/player";
 import { Type } from "class-transformer";
 
@@ -78,6 +78,9 @@ export class Team {
     @IsInt()
     year = 0;
 
+    @IsBoolean()
+    isWomen = false;
+
     @IsArray()
     @ValidateNested({ each: true })
     @Type(() => Player)
@@ -116,6 +119,7 @@ export class Team {
         t.nickname = obj.nickname;
         t.attendance = obj.attendance;
         t.year = obj.year;
+        t.isWomen = obj.isWomen;
 
         if (obj.players && typeof obj.players.length !== 'undefined') {
             t.players = obj.players.map((p: any) => Player.fromObject(p));
@@ -156,6 +160,7 @@ export class Team {
             nickname: this.nickname,
             attendance: this.attendance,
             year: this.year,
+            isWomen: this.isWomen,
             players: this.players.map(p => p.toObject())
         };
     }

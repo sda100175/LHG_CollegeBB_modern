@@ -26,7 +26,11 @@ describe('TeamGame', () => {
 
     it('initializes', () => {
         expect(tg.inspect()).toEqual({
-            _adjFGAPerG: 69
+            _adjFGAPerG: 69,
+            _adjOffSteal: 0,
+            _adjDefTurnover: 2,
+            _adjDefFoul: 2,
+            _adjOffTurnover: 5
         });
 
         const rc = countRoster(tg.roster);

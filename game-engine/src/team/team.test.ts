@@ -31,6 +31,7 @@ describe('Team', () => {
             "nickname": "TIGERS",
             "attendance":  16546,
             "year":  1990,
+            "isWomen": false,
             "players": [
                {
                   "name": "C.JACKSON",
