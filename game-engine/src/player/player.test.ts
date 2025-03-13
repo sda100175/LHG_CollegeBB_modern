@@ -51,4 +51,10 @@ describe('Player', () => {
         obj.stealRating = '200';
         expect(() => Player.fromObject(obj)).toThrow();
     });
+
+    it('correctly identifies placeholder players', () => {
+        expect(p.isPlaceholder()).toEqual(false);
+        const p2 = new Player();
+        expect(p2.isPlaceholder()).toEqual(true);
+    });
 });

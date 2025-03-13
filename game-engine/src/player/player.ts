@@ -2,7 +2,7 @@ import { IsInt, IsString, validateSync } from "class-validator";
 
 export class Player {
     @IsString()
-    name = '';
+    name = 'XXX';
 
     @IsInt()
     adjFgPct = 0;
@@ -49,6 +49,7 @@ export class Player {
     /**
      * Initialize a Player instance from a flat object.
      * @param obj Flat object with required information (usually stored from toObject routine)
+     * @returns {Player} Initialized Player
      * @throws {Error} If invalid value for any field detected.
      */
     static fromObject(obj: Record<string, any>) {
@@ -74,6 +75,16 @@ export class Player {
         return p;
     }
     
+    /**
+     * LHCCBB had fixed record sizes and needed to fill out 14 players.  It often used 'XXX'
+     * players (which were not real) to accomplish this. This function returns if the 
+     * given player was one of these placeholders.
+     * @returns {boolean} True if a 'placeholder' player, false if a real one.
+     */
+    isPlaceholder() {
+        return (this.name === 'XXX');
+    }
+
     /**
      * Create a JS flat object from the class.
      * @returns Flat object that can be used to initialize the class.
