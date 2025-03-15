@@ -1,18 +1,34 @@
-import { GameLocation, GameSettings, ShotClockOption } from "../game-settings/game-settings";
+import { GameLocation, GameSettings, PlayerOption, ShotClockOption } from "../game-settings/game-settings";
+import { TeamGame, TeamGameControl } from "../team-game/team-game";
 import { Team } from "../team/team";
 
 export class Game {
+    private _gameAvgStamina = 0;
     private _attendance = 0;
     private _shotClock = 0;
-    private _avgTeamStamina = 0;
+    private _rebFoulChance = 8;
 
+    visitorTeamGame: TeamGame;
+    homeTeamGame: TeamGame;
+    
     constructor(public gameSettings: GameSettings,
         public visitorTeam: Team,
         public homeTeam: Team
     ) {
-        this._calcAttendance();
         this._setAvgTeamStamina();
+        this._calcAttendance();
         this._resetShotClock();
+        this._adjustRebFoulChance(this._gameAvgStamina);
+
+        const ctrl = this._getTeamControl();
+        this.visitorTeamGame = new TeamGame(this.visitorTeam, ctrl.visitor, this);
+        this.homeTeamGame = new TeamGame(this.homeTeam, ctrl.home, this);
+    }
+
+    private _adjustRebFoulChance(gameAvgStamina: number) {
+        if (gameAvgStamina > 114) {
+            this._rebFoulChance = (114 / gameAvgStamina) * this._rebFoulChance;
+        }
     }
 
     private _calcAttendance() {
@@ -22,6 +38,25 @@ export class Game {
             const margin = this.homeTeam.attendance * 0.12;
             this._attendance = this.homeTeam.attendance + (Math.random() * margin * 2) - margin;
         }
+    }
+
+    // Sets CPU or HUMAN control for each team based on game settings.
+    private _getTeamControl() {
+        const vals = { 'visitor': TeamGameControl.CPU, 'home': TeamGameControl.CPU };        
+
+        switch (this.gameSettings.playerMode) {
+            case PlayerOption.VS_HUMAN:
+                vals.visitor = vals.home = TeamGameControl.HUMAN;
+                break;
+            case PlayerOption.CPU_IS_HOME:
+                vals.visitor = TeamGameControl.HUMAN;
+                break;
+            case PlayerOption.CPU_IS_VISITOR:
+                vals.home = TeamGameControl.HUMAN;
+                break;
+        }
+
+        return vals;
     }
 
     private _resetShotClock() {
@@ -34,7 +69,7 @@ export class Game {
     }
 
     private _setAvgTeamStamina() {
-        this._avgTeamStamina = (this.visitorTeam.teamStamina + this.homeTeam.teamStamina) / 2;
+        this._gameAvgStamina = (this.visitorTeam.teamStamina + this.homeTeam.teamStamina) / 2;
     }
 
     get attendance() { return this._attendance }
@@ -45,5 +80,14 @@ export class Game {
             : this.homeTeam.arena; 
     }
 
+    get gameAvgStamina() { return this._gameAvgStamina }
+
     get shotClock() { return this._shotClock }
+
+    // Strictly for test/debug, DO NOT USE for game logic!
+    inspect() {
+        return {
+            _rebFoulChance: this._rebFoulChance
+        }
+    }
 }

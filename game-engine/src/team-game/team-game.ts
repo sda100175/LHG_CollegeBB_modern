@@ -1,21 +1,21 @@
+import { Game } from "../game/game";
 import { PlayerGame } from "../player-game/player-game";
 import { Player } from "../player/player";
 import { Team } from "../team/team";
 import { Rand100 } from "../util";
 
-export class TeamGame {
-    private _adjFGAPerG = 0;
-    private _adjOffSteal = 0;
-    private _adjDefTurnover = 0;
-    private _adjDefFoul = 0;
-    private _adjOffTurnover = 0;
+export enum TeamGameControl {
+    CPU = 0,
+    HUMAN = 1
+}
 
+export class TeamGame {
     roster: PlayerGame[] = [];
     
-    constructor(public team: Team) {
-        this._setAdjFGAPerG();
+    constructor(public team: Team, public control: TeamGameControl, public game: Game) {
         this._initRoster();
-        this._setAdjustedRatings();
+        this._adjustContribPct(game.gameAvgStamina);
+        this._adjustFoulDrawRating(game.gameAvgStamina);
     }
 
     private _checkIfInactive(p: Player) {
@@ -24,6 +24,39 @@ export class TeamGame {
         // If a random 1-100 number is greater than ((player games / team games) * 100)
         const rnd = Rand100();
         return (rnd > ((p.gamesPlayed / this.team.teamGamesPlayed) * 100));
+    }
+
+    // Adjust contribution percentages for each player to a per-game value
+    private _adjustContribPct(gameAvgStamina: number) {
+        let staminaSum = 0;
+
+        // Adjust from overall team contribution to a "per game played" number
+        this.roster.forEach(pg => {
+            if (pg.isInactive === false) {
+                if (this.team.teamGamesPlayed > 0 && pg.player.gamesPlayed > 0) {
+                    pg.contribPct = pg.contribPct * this.team.teamGamesPlayed / pg.player.gamesPlayed;
+                }
+                staminaSum += pg.contribPct;    
+            }
+        });
+
+        // Further adjust to account for the average pacing between the two teams. Also make sure no 
+        // active players have a contribPct of 0 (instead use 1)
+        this.roster.forEach(pg => {
+            if (pg.isInactive === false) {
+                pg.contribPct = pg.contribPct / staminaSum * gameAvgStamina;
+                if (pg.contribPct < 1) { pg.contribPct = 1 }
+            }
+        });
+    }
+
+    // Adjusts stamina if '99' stats not used
+    private _adjustFoulDrawRating(gameAvgStamina: number) {
+        if (this.team.ifUsing99 !== 99 && gameAvgStamina > 120) {
+            this.roster.forEach(pg => {
+                pg.foulDrawRating = pg.foulDrawRating * (120 / gameAvgStamina)
+            });
+        }
     }
 
     // Ensures adequate roster construction, enough actives, inactivate placeholders, etc.
@@ -39,44 +72,82 @@ export class TeamGame {
                 } else {
                     actives++;
                 }
-                this.roster.push(new PlayerGame(p, isInactive));                    
+                this.roster.push(new PlayerGame(p, isInactive, this));                    
             });    
         } while ( (actives < 10 && inactives < 4) || (inactives >= 5 && actives < 8));
     }
 
-    private _setAdjFGAPerG() {
-        this._adjFGAPerG = 2 * this.team.teamFGAPerG - this.team.leagueFGAPerG;
-    }
+    /**
+     * Adjusted pace (FGA per game adjusted for league)
+     */
+    get adjFGAPerG() { return 2 * this.team.teamFGAPerG - this.team.leagueFGAPerG }
 
-    private _setAdjustedRatings() {
-        // Offensive steal adjustments
-        this._adjOffSteal = this.team.offStealRating;
-        if (this._adjOffSteal > 20) this._adjOffSteal -= 100;
-        
-        // Defensive turnover adjustments
-        this._adjDefTurnover = this.team.defTurnoverAdj;
-        if (this._adjDefTurnover > 20) this._adjDefTurnover -= 100;
-
-        // Defensive foul adjustments
-        this._adjDefFoul = this.team.defFoulAdj;
-        if (this._adjDefFoul > 20) this._adjDefFoul -= 100;
-
-        // Offensive turnover adjustments
-        this._adjOffTurnover = this.team.offTurnoverRating;
-        if (this._adjOffTurnover === 0) this._adjOffTurnover = 4;
+    /**
+     * Defensive 3pt shot taken rate
+     */
+    get def3FGAvFGAAdj() {
+        return (this.team.def3FGAvFGAAdj > 20) ? this.team.def3FGAvFGAAdj - 100 : this.team.def3FGAvFGAAdj;
     }
 
     /**
-     * Inspect internal values of the class, mainly for debugging and testing.
-     * @returns Object with private field values for testing.
+     * 3pt pct against
      */
-    inspect() {
-        return {
-            _adjFGAPerG: this._adjFGAPerG,
-            _adjOffSteal: this._adjOffSteal,
-            _adjDefTurnover: this._adjDefTurnover,
-            _adjDefFoul: this._adjDefFoul,
-            _adjOffTurnover: this._adjOffTurnover
+    get def3FGPctAdj() {
+        return (this.team.def3FGPctAdj > 20) ? this.team.def3FGPctAdj - 100: this.team.def3FGPctAdj;
+    }
+
+    /**
+     * Defensive fouling propensity
+     */
+    get defFoulAdj() {
+        if (this.team.ifUsing99 !== 99) {
+            return 0;
+        } else if (this.team.defFoulAdj > 20) {
+            return this.team.defFoulAdj - 100;
+        } else {
+            return this.team.defFoulAdj;
         }
     }
+
+    /**
+     * Defensive turnovers propensity
+     */
+    get defTurnoverAdj() {
+        if (this.team.ifUsing99 !== 99) {
+            return 0;
+        } else if (this.team.defTurnoverAdj > 20) {
+            return this.team.defTurnoverAdj - 100;
+        } else {
+            return this.team.defTurnoverAdj;
+        }
+    }
+
+    /**
+     * Offensive turnovers propensity
+     */
+    get offTurnoverRating() {
+        if (this.team.ifUsing99 !== 99 || this.team.offTurnoverRating === 0) {
+            return 4;
+        } else {
+            return this.team.offTurnoverRating;
+        }
+    }
+
+    /**
+     * Offensive steal propensity
+     */
+    get offStealRating() { 
+        if (this.team.ifUsing99 !== 99) {
+            return 0;
+        } else if (this.team.offStealRating > 20) {
+            return this.team.offStealRating - 100;
+        } else {
+            return this.team.offStealRating;
+        }
+    }
+
+    /**
+     * Team year
+     */
+    get year() { return this.team.year }
 }
