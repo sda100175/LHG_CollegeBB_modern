@@ -1,4 +1,6 @@
+import { ShotClockOption } from "../game-settings/game-settings";
 import { Player } from "../player/player";
+import { Stats } from "../stats/stats";
 import { TeamGame } from "../team-game/team-game";
 
 /**
@@ -9,7 +11,11 @@ export class PlayerGame {
     private _adjContribPct = -1;
     private _adjFoulDrawRating = -1;
 
-    constructor(public player: Player, public isInactive: boolean, public teamGame: TeamGame) {}
+    stats: Stats;
+    
+    constructor(public player: Player, public isInactive: boolean, public teamGame: TeamGame) {
+        this.stats = new Stats();
+    }
 
     /**
      * Contribution rate
@@ -29,13 +35,17 @@ export class PlayerGame {
 
     /**
      * Player fatigue / remaining contribution points
-     * TODO: there is code that adjusts initial fat up by 20% if there is no shot clock, not implemented
-     *   here, should probably be done in game code:
-     *     If sClockVal = 0 Then playerCX! = playerCX! * 1.2
      */
     get fatigue() { 
         let fat = this.contribPct;
-        return fat;
+
+        // Adjust up contribution for no shot clock era, coaches used less players back then
+        if (this.teamGame.game.gameSettings.shotClock === ShotClockOption.NONE) {
+            fat *= 1.2;
+        }
+
+        // Subtract current FGA, rebounds, and fouls to get remaining contribution
+        return fat - this.stats.fieldGoalsAtt - this.stats.totalRebounds - this.stats.personalFouls;
     }
 
     /**

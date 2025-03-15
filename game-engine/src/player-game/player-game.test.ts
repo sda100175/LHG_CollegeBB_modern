@@ -1,6 +1,7 @@
 import { PlayerGame } from "./player-game";
 import { makeGame } from "../../test_data/bootstrap-game";
 import { Game } from "../game/game";
+import { ShotClockOption } from "../game-settings/game-settings";
 
 describe('PlayerGame', () => {
     let g: Game;
@@ -33,6 +34,19 @@ describe('PlayerGame', () => {
             pg.foulDrawRating = 3;
             expect(pg.foulDrawRating).toEqual(3);
         });    
+
+        it('properly handles fatigue calculation', () => {
+            expect(pg.fatigue).toEqual(22);
+            pg.stats.fieldGoalsAtt = 6;
+            pg.stats.totalRebounds = 2;
+            pg.stats.personalFouls = 1;
+            expect(pg.fatigue).toEqual(13);
+
+            // Test no shot clock adjustment
+            pg.teamGame.game.gameSettings.shotClock = ShotClockOption.NONE;
+            pg.stats.reset();
+            expect(pg.fatigue).toBeCloseTo(26.4, 1);
+        });
 
         describe('when using a XXX player with 0 values', () => {
             beforeEach(() => {
