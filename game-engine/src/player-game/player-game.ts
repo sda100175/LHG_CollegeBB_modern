@@ -85,6 +85,11 @@ export class PlayerGame {
     set foulDrawRating(rate: number) { this._adjFoulDrawRating = rate }
 
     /**
+     * Has the player fouled out of this game?
+     */
+    get isFouledOut() { return (this.stats.personalFouls >= this.teamGame.game.gameSettings.foulsToDisqualify) }
+
+    /**
      * Offensive rebounding prowess
      */
     get offReb40Minx10() { return this.player.offReb40Minx10 }

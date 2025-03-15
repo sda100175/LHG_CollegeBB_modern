@@ -21,6 +21,7 @@ describe('PlayerGame', () => {
             expect(pg.fg3OfTotalFgAtt).toEqual(4);
             expect(pg.defReb40Minx10).toEqual(68);
             expect(pg.offReb40Minx10).toEqual(32);
+            expect(pg.isFouledOut).toEqual(false);
         });    
 
         it('properly handles contribPct', () => {
@@ -46,6 +47,11 @@ describe('PlayerGame', () => {
             pg.teamGame.game.gameSettings.shotClock = ShotClockOption.NONE;
             pg.stats.reset();
             expect(pg.fatigue).toBeCloseTo(26.4, 1);
+        });
+
+        it('properly identifies a fouled out player', () => {
+            pg.stats.personalFouls = 5;
+            expect(pg.isFouledOut).toEqual(true);
         });
 
         describe('when using a XXX player with 0 values', () => {

@@ -5,6 +5,8 @@ import { Team } from "../team/team";
 export class Game {
     private _gameAvgStamina = 0;
     private _attendance = 0;
+    private _currHalf = 1;
+    private _gameClock = 1200;
     private _shotClock = 0;
     private _rebFoulChance = 8;
 
@@ -74,6 +76,8 @@ export class Game {
 
     get attendance() { return this._attendance }
 
+    get currHalf() { return this._currHalf }
+
     get location() { 
         return (this.gameSettings.location === GameLocation.NEUTRAL_SITE) 
             ? 'NEUTRAL SITE' 
@@ -81,6 +85,8 @@ export class Game {
     }
 
     get gameAvgStamina() { return this._gameAvgStamina }
+
+    get gameClock() { return this._gameClock }
 
     get shotClock() { return this._shotClock }
 

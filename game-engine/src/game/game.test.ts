@@ -18,6 +18,8 @@ describe('Game', () => {
         expect(g.attendance).toBeGreaterThan(0);
         expect(g.location).toEqual('WILLIAM COLE JR. STUDENT ACTIVITIES BLDG');
         expect(g.shotClock).toEqual(30);
+        expect(g.gameClock).toEqual(1200);
+        expect(g.currHalf).toEqual(1);
         expect(g.gameAvgStamina).toBeCloseTo(128.5, 1);
         expect(g.visitorTeamGame.control).toEqual(TeamGameControl.CPU);
         expect(g.homeTeamGame.control).toEqual(TeamGameControl.CPU);

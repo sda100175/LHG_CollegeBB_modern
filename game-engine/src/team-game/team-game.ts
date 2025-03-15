@@ -11,6 +11,7 @@ export enum TeamGameControl {
 
 export class TeamGame {
     roster: PlayerGame[] = [];
+    lineup: PlayerGame[] = [];
     
     constructor(public team: Team, public control: TeamGameControl, public game: Game) {
         this._initRoster();
