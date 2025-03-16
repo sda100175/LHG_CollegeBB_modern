@@ -96,4 +96,10 @@ export class Game {
             _rebFoulChance: this._rebFoulChance
         }
     }
+
+    // Strictly for test/debug
+    setGameClock(currHalf: number, gameClock: number) {
+        this._currHalf = currHalf;
+        this._gameClock = gameClock;
+    }
 }
