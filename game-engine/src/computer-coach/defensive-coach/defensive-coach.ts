@@ -9,7 +9,7 @@ export class DefensiveCoach {
 
         // Basically just running a weighted random strategy. Simplified some from original code (same result though).
         switch (true) {
-            case (rnd0 <= 1 && rnd0 <= 3): defStrategy = DefensiveStrategy.DIAMOND_ZONE_SOLID_MTM;  break;
+            case (rnd0 >= 1 && rnd0 <= 3): defStrategy = DefensiveStrategy.DIAMOND_ZONE_SOLID_MTM;  break;
             case (rnd0 === 4 || rnd0 === 5): defStrategy = DefensiveStrategy.ZONE_PRESS_221_PRESSURE_MTM;  break;
             case (rnd0 === 6): defStrategy = DefensiveStrategy.ZONE_PRESS_221_ZONE_32; break;
             case (rnd0 >= 7 && rnd0 <= 9): defStrategy = DefensiveStrategy.ZONE_PRESS_221_ZONE_23; break;
