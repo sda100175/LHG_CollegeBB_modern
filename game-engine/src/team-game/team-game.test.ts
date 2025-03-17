@@ -39,7 +39,8 @@ describe('TeamGame', () => {
             expect(htg.offTurnoverRating).toEqual(5);
             expect(htg.def3FGAvFGAAdj).toEqual(2);
             expect(htg.def3FGPctAdj).toEqual(0);
-    
+            expect(htg.stats).toBeTruthy();
+            
             expect(vtg.control).toEqual(TeamGameControl.CPU);
         });        
 

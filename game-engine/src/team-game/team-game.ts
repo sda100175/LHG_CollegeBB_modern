@@ -1,6 +1,7 @@
 import { Game } from "../game/game";
 import { PlayerGame } from "../player-game/player-game";
 import { Player } from "../player/player";
+import { Stats } from "../stats/stats";
 import { Team } from "../team/team";
 import { Rand100 } from "../util";
 
@@ -9,10 +10,32 @@ export enum TeamGameControl {
     HUMAN = 1
 }
 
+export enum DefensiveStrategy {
+    SOLID_MTM = 0,
+    PRESSURE_MTM = 1,
+    ZONE_23 = 2,
+    ZONE_131 = 3,
+    FCP_SOLID_MTM = 4,
+    FCP_RJ_SOLID_MTM = 5,
+    FCP_RJ_PRESSURE_MTM = 6,
+    ZONE_PRESS_221_ZONE_23 = 7,
+    ZONE_PRESS_221_SOLID_MTM = 8,
+    ZONE_PRESS_221_PRESSURE_MTM = 9,
+    DIAMOND_ZONE_SOLID_MTM = 10,
+    DIAMOND_ZONE_PRESSURE_MTM = 11,
+    DIAMOND_ZONE_ZONE_23 = 12,
+    DIAMOND_ZONE_ZONE_131 = 13,
+    FCP_MTM_DENIAL = 14,
+    ZONE_32 = 15,
+    ZONE_PRESS_221_ZONE_32 = 16,
+    DIAMOND_ZONE_ZONE_32 = 17
+}
+
 export class TeamGame {
     roster: PlayerGame[] = [];
     lineup: PlayerGame[] = [];
-    
+    defStrategy = DefensiveStrategy.SOLID_MTM;
+
     constructor(public team: Team, public control: TeamGameControl, public game: Game) {
         this._initRoster();
         this._adjustContribPct(game.gameAvgStamina);
@@ -146,6 +169,11 @@ export class TeamGame {
             return this.team.offStealRating;
         }
     }
+
+    /**
+     * Get current game stats for this team.
+     */
+    get stats() { return Stats.compile(this.roster.map(pg => pg.stats)) }
 
     /**
      * Team year

@@ -11,11 +11,9 @@ export class PlayerGame {
     private _adjContribPct = -1;
     private _adjFoulDrawRating = -1;
 
-    stats: Stats;
+    stats = new Stats();
     
-    constructor(public player: Player, public isInactive: boolean, public teamGame: TeamGame) {
-        this.stats = new Stats();
-    }
+    constructor(public player: Player, public isInactive: boolean, public teamGame: TeamGame) {}
 
     /**
      * Contribution rate

@@ -1,6 +1,6 @@
 import { Game } from "../game/game";
 import { PlayerGame } from "../player-game/player-game";
-import { TeamGame } from "../team-game/team-game";
+import { DefensiveStrategy, TeamGame } from "../team-game/team-game";
 
 class PlayerEval {
     game: Game;
@@ -81,12 +81,9 @@ class PlayerEval {
         return false;
     }
 
-    /**
-     * Player is not available if inactive or already fouled out.
-     */
-    isInvalidPlayer() {
-        return (this.playerGame.isInactive || this.playerGame.isFouledOut);
-    }
+    get isInactive() { return this.playerGame.isInactive }
+
+    get isFouledOut() { return this.playerGame.isFouledOut }
 }
 
 export class ComputerCoach {
@@ -94,27 +91,82 @@ export class ComputerCoach {
         this.setLineup();
     }
 
-    setLineup() {
+    // Make lineup out by who has most contribution left. Can avoid players in foul trouble or players "over-contributing"
+    // to this point in the game as well.
+    private _slotByStamina(checkFouls = true, checkContribution = true, checkFouledOut = true) {
         // Map roster, sort by effective stamina (descending order)
         const roster = this.teamGame.roster.map(pg => new PlayerEval(pg));
         roster.sort((a, b) => b.effectiveStamina - a.effectiveStamina);
 
-        // Slot players into the lineup
+        // Slot players into the lineup, skipping due to foul trouble or over contribution
         const lineup: PlayerEval[] = [];
-        for (let lineupSlot = 0, rosterSlot = 0; lineupSlot < 5 && rosterSlot < roster.length; rosterSlot++) {
+        for (let rosterSlot = 0; lineup.length < 5 && rosterSlot < roster.length; rosterSlot++) {
             const pe = roster[rosterSlot];
-            
-            // Don't slot this player if any of these conditions are met
-            if (pe.isInvalidPlayer() || pe.isInFoulTrouble() || pe.isOverContributing()) { continue }
 
-            // Otherwise, go ahead and slot this player.
-            lineup[lineupSlot] = roster[rosterSlot];
-            lineupSlot++;
+            // Never slot players that are inactive.
+            if (pe.isInactive) { continue }
+
+            // Avoid players that have fouled out (optional but only when not enough eligible players)
+            if (checkFouledOut && pe.isFouledOut) { continue }
+
+            // Avoid players in foul trouble (optional)
+            if (checkFouls && pe.isInFoulTrouble()) { continue }
+
+            // Avoid players that are "over-contributing" to this point in the game (optional)
+            if (checkContribution && pe.isOverContributing()) { continue }
+ 
+            // If good, go ahead and slot this player.
+            lineup.push(roster[rosterSlot]);
         }
 
-        // Set lineup in TeamGame
-        for (let lineupSlot = 0; lineupSlot < 5; lineupSlot++) { 
+        return lineup;
+    }
+
+    getOpposingTeamGame() {
+        const g = this.teamGame.game;
+        return (g.visitorTeamGame === this.teamGame) ? g.homeTeamGame : g.visitorTeamGame;
+    }
+
+    getScoreDiff() {
+        const us = this.teamGame;
+        const them = this.getOpposingTeamGame();
+        return (us.stats.pointsScored - them.stats.pointsScored);
+    }
+
+    setLineup() {
+        // Initial run - slot by stamina, accounting for foul trouble and over-contributions.
+        let lineup = this._slotByStamina();
+
+        // Didn't get enough players - try again only eliminating truly unavailable players.
+        if (lineup.length < 5) { lineup = this._slotByStamina(false, false) }
+
+        // It is possible - if too many players fouled out - to not have a full lineup here.
+        // In this case you have to insert fouled out players, no other option. In actual NCAA there
+        // is the "phantom rule" that allows them to keep playing with extra foul penalties.
+        if (lineup.length < 5) { lineup = this._slotByStamina(false, false, false) }
+
+        // Sort the lineup by defensive rebounding, lowest to highest.
+        lineup.sort((a, b) => a.playerGame.defReb40Minx10 - b.playerGame.defReb40Minx10);
+
+        // Set actual lineup in TeamGame
+        for (let lineupSlot = 0; lineupSlot < lineup.length; lineupSlot++) { 
             this.teamGame.lineup[lineupSlot] = lineup[lineupSlot].playerGame;
+        }
+    }
+
+    setStrategy() {
+        let defStrategy = DefensiveStrategy.SOLID_MTM;
+        const scoreDiff = this.getScoreDiff();
+
+        
+    }
+
+    /**
+     * Used for testing or debugging only, exposes some private implementation details.
+     */
+    inspect() {
+        return {
+            slotByStamina: this._slotByStamina.bind(this)
         }
     }
 }
