@@ -46,6 +46,29 @@ export class DefensiveCoach {
         return defStrategy;
     }
 
+    private static _secondHalfLosingOver5MinWithin10() {
+        let defStrategy = DefensiveStrategy.SOLID_MTM;
+        let rnd0 = Rand100();
+
+        switch (true) {
+            case (rnd0 >= 1 && rnd0 <= 52): defStrategy = DefensiveStrategy.SOLID_MTM; break;
+            case (rnd0 >= 53 && rnd0 <= 75): defStrategy = DefensiveStrategy.PRESSURE_MTM; break;
+            case (rnd0 >= 76 && rnd0 <= 84): defStrategy = DefensiveStrategy.ZONE_23; break;
+            case (rnd0 === 85): defStrategy = DefensiveStrategy.ZONE_32; break;
+            case (rnd0 >= 86 && rnd0 <= 93): defStrategy = DefensiveStrategy.FCP_RJ_SOLID_MTM; break;
+            case (rnd0 >= 94 && rnd0 <= 97): defStrategy = DefensiveStrategy.ZONE_131; break;
+            case (rnd0 >= 98 && rnd0 <= 100): defStrategy = DefensiveStrategy.DIAMOND_ZONE_ZONE_23; break;
+        }
+
+        return defStrategy;
+    }
+
+    private static _secondHalfLosingOver5Min(scoreDiff: number) {
+        if (scoreDiff < 10) {
+            return this._secondHalfLosingOver5MinWithin10();
+        }
+    }
+
     static getStrategyRecommendation(cc: ComputerCoach) {
         const scoreDiff = cc.getScoreDiff();
 
@@ -54,6 +77,11 @@ export class DefensiveCoach {
 
         } else if (cc.teamGame.game.currHalf === 1 && scoreDiff < 0) {
             return this._firstHalfStrategyWhenLosing();
+        
+        } else if (cc.teamGame.game.currHalf === 2) {
+            if (cc.teamGame.game.gameClock >= 600) {
+                return this._secondHalfLosingOver5Min(scoreDiff);
+            }
         }        
     }
 }

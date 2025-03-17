@@ -124,4 +124,48 @@ describe('DefensiveCoach', () => {
             expect(DefensiveCoach.getStrategyRecommendation(cc)).toEqual(DefensiveStrategy.ZONE_131);
         });
     });
+
+    describe('when losing in the second half, with over 5 minutes left, within 10 points', () => {
+        beforeEach(() => {
+            cc = <ComputerCoach> {
+                teamGame: { game: { currHalf: 2, gameClock: 800 } },
+                getScoreDiff: () => -7
+            }
+        });
+
+        it('selects SOLID_MTM when random between 1-52', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(33);
+            expect(DefensiveCoach.getStrategyRecommendation(cc)).toEqual(DefensiveStrategy.SOLID_MTM);
+        });
+
+        it('selects PRESSURE_MTM when random between 53-75', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(60);
+            expect(DefensiveCoach.getStrategyRecommendation(cc)).toEqual(DefensiveStrategy.PRESSURE_MTM);
+        });
+
+        it('selects ZONE_23 when random between 76-84', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(81);
+            expect(DefensiveCoach.getStrategyRecommendation(cc)).toEqual(DefensiveStrategy.ZONE_23);
+        });
+
+        it('selects ZONE_32 when random between 85', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(85);
+            expect(DefensiveCoach.getStrategyRecommendation(cc)).toEqual(DefensiveStrategy.ZONE_32);
+        });
+
+        it('selects FCP_RJ_SOLID_MTM when random between 86-93', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(93);
+            expect(DefensiveCoach.getStrategyRecommendation(cc)).toEqual(DefensiveStrategy.FCP_RJ_SOLID_MTM);
+        });
+
+        it('selects ZONE_131 when random between 94-97', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(95);
+            expect(DefensiveCoach.getStrategyRecommendation(cc)).toEqual(DefensiveStrategy.ZONE_131);
+        });
+
+        it('selects DIAMOND_ZONE_ZONE_23 when random between 98-100', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(98);
+            expect(DefensiveCoach.getStrategyRecommendation(cc)).toEqual(DefensiveStrategy.DIAMOND_ZONE_ZONE_23);
+        });
+    });
 });
