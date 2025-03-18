@@ -12065,8 +12065,6 @@ Sub ComputerStrategy ()
                         defStrat(P9) = 15
 
                 End Select
-                ' =====> CURSOR 2 <=====
-
 
             Case 2
                 '2nd Half strategy
@@ -12157,6 +12155,7 @@ Sub ComputerStrategy ()
                             'Opponent ahead by 20+
 
                             Case Is <= 10
+
                                 'Opponent behind or within 10
 
                                 Select Case RN0
@@ -12198,6 +12197,7 @@ Sub ComputerStrategy ()
 
                                 End Select
 
+' =====> CURSOR 2 <=====                
                             Case Is > 20
 
                                 Select Case RN0

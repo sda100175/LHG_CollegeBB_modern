@@ -107,18 +107,80 @@ export class DefensiveCoach {
         }
     }
 
+    private static _secondHalfLosingByLessThan102To5MinLeft() {
+        let defStrategy = DefensiveStrategy.SOLID_MTM;
+        let rnd0 = Rand100();
+
+        switch (true) {
+            case (rnd0 >= 1 && rnd0 <= 52): defStrategy = DefensiveStrategy.SOLID_MTM; break;
+            case (rnd0 >= 53 && rnd0 <= 71): defStrategy = DefensiveStrategy.ZONE_23; break;
+            case (rnd0 === 72): defStrategy = DefensiveStrategy.ZONE_32; break;
+            case (rnd0 >= 73 && rnd0 <= 78): defStrategy = DefensiveStrategy.PRESSURE_MTM; break;
+            case (rnd0 >= 79 && rnd0 <= 100): defStrategy = DefensiveStrategy.DIAMOND_ZONE_SOLID_MTM; break;
+        }
+
+        return defStrategy;
+    }
+
+    private static _secondHalfLosingBy10To202To5MinLeft() {
+        let defStrategy = DefensiveStrategy.SOLID_MTM;
+        let rnd0 = Rand100();
+
+        switch (true) {
+            case (rnd0 >= 1 && rnd0 <= 52): defStrategy = DefensiveStrategy.SOLID_MTM; break;
+            case (rnd0 >= 53 && rnd0 <= 80): defStrategy = DefensiveStrategy.PRESSURE_MTM; break;
+            case (rnd0 >= 81 && rnd0 <= 90): defStrategy = DefensiveStrategy.FCP_RJ_SOLID_MTM; break;
+            case (rnd0 >= 91 && rnd0 <= 100): defStrategy = DefensiveStrategy.DIAMOND_ZONE_ZONE_23; break;
+        }
+
+        return defStrategy;
+    }
+
+    private static _secondHalfLosingBy20Plus2To5MinLeft() {
+        let defStrategy = DefensiveStrategy.SOLID_MTM;
+        let rnd0 = Rand100();
+
+        switch (true) {
+            case (rnd0 >= 1 && rnd0 <= 52): defStrategy = DefensiveStrategy.SOLID_MTM; break;
+            case (rnd0 >= 53 && rnd0 <= 74): defStrategy = DefensiveStrategy.PRESSURE_MTM; break;
+            case (rnd0 >= 75 && rnd0 <= 84): defStrategy = DefensiveStrategy.FCP_RJ_SOLID_MTM; break;
+            case (rnd0 >= 85 && rnd0 <= 94): defStrategy = DefensiveStrategy.DIAMOND_ZONE_SOLID_MTM; break;
+            case (rnd0 >= 95 && rnd0 <= 100): defStrategy = DefensiveStrategy.DIAMOND_ZONE_ZONE_131; break;
+        }
+
+        return defStrategy;
+    }
+
+    private static _secondHalfLosing2To5Min(scoreDiff: number) {
+        scoreDiff = Math.abs(scoreDiff);
+
+        if (scoreDiff < 10) {
+            return this._secondHalfLosingByLessThan102To5MinLeft();
+
+        } else if (scoreDiff >= 10 && scoreDiff <= 20) {
+            return this._secondHalfLosingBy10To202To5MinLeft();
+
+        } else {
+            return this._secondHalfLosingBy20Plus2To5MinLeft();
+        }
+    }
+
     static getStrategyRecommendation(cc: ComputerCoach) {
         const scoreDiff = cc.getScoreDiff();
+        const g = cc.teamGame.game;
 
         if (scoreDiff >= 0) {
             return this._strategyWhenWinning();
 
-        } else if (cc.teamGame.game.currHalf === 1 && scoreDiff < 0) {
+        } else if (g.currHalf === 1 && scoreDiff < 0) {
             return this._firstHalfStrategyWhenLosing();
         
-        } else if (cc.teamGame.game.currHalf === 2) {
-            if (cc.teamGame.game.gameClock >= 600) {
+        } else if (g.currHalf === 2) {
+            if (g.gameClock >= 600) {
                 return this._secondHalfLosingOver5Min(scoreDiff);
+
+            } else if (g.gameClock >= 120 && g.gameClock < 600) {
+                return this._secondHalfLosing2To5Min(scoreDiff);
             }
         }        
     }

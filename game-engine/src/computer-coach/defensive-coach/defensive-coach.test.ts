@@ -9,6 +9,7 @@ describe('DefensiveCoach', () => {
     describe('when winning', () => {
         beforeEach(() => {
             cc = <ComputerCoach> {
+                teamGame: { game: { currHalf: 2, gameClock: 250 } },
                 getScoreDiff: () => 5
             }
         });
@@ -234,6 +235,103 @@ describe('DefensiveCoach', () => {
         it('selects DIAMOND_ZONE_PRESSURE_MTM when random between 98-100', () => {
             jest.spyOn(utils, 'Rand100').mockReturnValue(100);
             expect(DefensiveCoach.getStrategyRecommendation(cc)).toEqual(DefensiveStrategy.DIAMOND_ZONE_PRESSURE_MTM);
+        });
+    });
+
+    describe('when losing in the second half, with 2-5 minutes left left, within 10 points', () => {
+        beforeEach(() => {
+            cc = <ComputerCoach> {
+                teamGame: { game: { currHalf: 2, gameClock: 250 } },
+                getScoreDiff: () => -6
+            }
+        });
+
+        it('selects SOLID_MTM when random between 1-52', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(33);
+            expect(DefensiveCoach.getStrategyRecommendation(cc)).toEqual(DefensiveStrategy.SOLID_MTM);
+        });
+
+        it('selects ZONE_23 when random between 53-71', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(60);
+            expect(DefensiveCoach.getStrategyRecommendation(cc)).toEqual(DefensiveStrategy.ZONE_23);
+        });
+
+        it('selects ZONE_32 when random is 72', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(72);
+            expect(DefensiveCoach.getStrategyRecommendation(cc)).toEqual(DefensiveStrategy.ZONE_32);
+        });
+
+        it('selects PRESSURE_MTM when random between 73-78', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(75);
+            expect(DefensiveCoach.getStrategyRecommendation(cc)).toEqual(DefensiveStrategy.PRESSURE_MTM);
+        });
+
+        it('selects DIAMOND_ZONE_SOLID_MTM when random between 79-100', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(90);
+            expect(DefensiveCoach.getStrategyRecommendation(cc)).toEqual(DefensiveStrategy.DIAMOND_ZONE_SOLID_MTM);
+        });
+    });
+
+    describe('when losing in the second half, with 2-5 minutes left left, between 10-20 points', () => {
+        beforeEach(() => {
+            cc = <ComputerCoach> {
+                teamGame: { game: { currHalf: 2, gameClock: 250 } },
+                getScoreDiff: () => -15
+            }
+        });
+
+        it('selects SOLID_MTM when random between 1-52', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(33);
+            expect(DefensiveCoach.getStrategyRecommendation(cc)).toEqual(DefensiveStrategy.SOLID_MTM);
+        });
+
+        it('selects PRESSURE_MTM when random between 53-80', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(60);
+            expect(DefensiveCoach.getStrategyRecommendation(cc)).toEqual(DefensiveStrategy.PRESSURE_MTM);
+        });
+
+        it('selects FCP_RJ_SOLID_MTM when random is between 81-90', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(83);
+            expect(DefensiveCoach.getStrategyRecommendation(cc)).toEqual(DefensiveStrategy.FCP_RJ_SOLID_MTM);
+        });
+
+        it('selects DIAMOND_ZONE_ZONE_23 when random between 91-100', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(93);
+            expect(DefensiveCoach.getStrategyRecommendation(cc)).toEqual(DefensiveStrategy.DIAMOND_ZONE_ZONE_23);
+        });
+    });
+
+    describe('when losing in the second half, with 2-5 minutes left left, over 20 points', () => {
+        beforeEach(() => {
+            cc = <ComputerCoach> {
+                teamGame: { game: { currHalf: 2, gameClock: 250 } },
+                getScoreDiff: () => -25
+            }
+        });
+
+        it('selects SOLID_MTM when random between 1-52', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(33);
+            expect(DefensiveCoach.getStrategyRecommendation(cc)).toEqual(DefensiveStrategy.SOLID_MTM);
+        });
+
+        it('selects PRESSURE_MTM when random between 53-74', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(60);
+            expect(DefensiveCoach.getStrategyRecommendation(cc)).toEqual(DefensiveStrategy.PRESSURE_MTM);
+        });
+
+        it('selects FCP_RJ_SOLID_MTM when random is between 75-84', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(83);
+            expect(DefensiveCoach.getStrategyRecommendation(cc)).toEqual(DefensiveStrategy.FCP_RJ_SOLID_MTM);
+        });
+
+        it('selects DIAMOND_ZONE_SOLID_MTM when random is between 85-94', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(90);
+            expect(DefensiveCoach.getStrategyRecommendation(cc)).toEqual(DefensiveStrategy.DIAMOND_ZONE_SOLID_MTM);
+        });
+
+        it('selects DIAMOND_ZONE_ZONE_131 when random between 95-100', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(95);
+            expect(DefensiveCoach.getStrategyRecommendation(cc)).toEqual(DefensiveStrategy.DIAMOND_ZONE_ZONE_131);
         });
     });
 });
