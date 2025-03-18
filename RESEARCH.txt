@@ -1,0 +1,164 @@
+=======================================================================================================================
+teamStamina(X)
+    Simply the Team.teamStamina rating, where X=0 is visitor, and X=1 is home 
+
+=======================================================================================================================
+dFGPA(X)
+    Simply the Team.defFGPctAdj rating, where X=0 is visitor, and X=1 is home 
+
+=======================================================================================================================
+d3FG_Adj(X)
+    Simply the Team.def3FGAvFGAAdj rating, where X=0 is visitor, and X=1 is home 
+
+=======================================================================================================================
+dthreeFGA_Adj(X)
+    Simply the Team.def3FGPctAdj rating, where X=0 is visitor, and X=1 is home 
+
+=======================================================================================================================
+leagRat_GAME(X,Y): league ratings for a single game
+    X is always visitor (0) or home (1)
+
+    Y is one of the league ratings from the Team file:
+        leagRat_GAME(X,0): Team.offStealRating
+        leagRat_GAME(X,1): Team.offTurnoverRating
+        leagRat_GAME(X,2): Team.defTurnoverAdj
+        leagRat_GAME(X,3): Team.defFoulAdj
+        leagRat_GAME(X,4): Team.ifUsing99
+
+=======================================================================================================================
+teamRat_GAME(X,Y): team-based ratings for a single game
+    X is always visitor (0) or home (1)
+
+    Y is the team rating value from the definition file:
+        teamRat_GAME(X,0) = Team.textColor
+        teamRat_GAME(X,1) = Team.backgroundColor
+        teamRat_GAME(X,2) = Team.twelve
+        teamRat_GAME(X,3) = Team.teamFGAPerG
+        teamRat_GAME(X,4) = Team.leagueFGAPerG
+        teamRat_GAME(X,5) = Team.teamGamesPlayed
+        teamRat_GAME(X,6) = Team.homecourtFactor
+        teamRat_GAME(X,7) = Team.wins
+        teamRat_GAME(X,8) = Team.losses
+        teamRat_GAME(X,9) = Team.powerRating
+
+=======================================================================================================================
+players$(X,Y): player names for each team 
+    X is always visitor (0) or home (1)
+
+    Y is the player index 0-13
+        players$(0,0) = name of player #0 on the visiting team
+
+=======================================================================================================================
+plyrOff_GAME!(X,Y,Z): 
+    X is still the team index, visitor = 0 and home = 1
+    
+    Y is the player index, 0-13
+
+    Z is the rating value:
+        plyrOff_GAME!(X,Y,0) = Player.adjFgPct
+        plyrOff_GAME!(X,Y,1) = Player.ftPct
+        plyrOff_GAME!(X,Y,2) = Player.defReb40Minx10 (or PlayerGame.defReb40Minx10)
+        plyrOff_GAME!(X,Y,3) = Player.contribPct (PlayerGame.contribPct)
+        plyrOff_GAME!(X,Y,4) = Player.assistRating
+        plyrOff_GAME!(X,Y,5) = Player.stealRating
+        plyrOff_GAME!(X,Y,6) = Player.blockRating
+
+        plyrOff_GAME!(X,Y,7)  = PlayerGame.stats.fieldGoalsAtt
+        plyrOff_GAME!(X,Y,11) = PlayerGame.stats.totalRebounds
+        plyrOff_GAME!(X,Y,12) = PlayerGame.stats.personalFouls
+        
+        plyrOff_GAME!(X,Y,16) = PlayerGame.foulDrawRating
+        plyrOff_GAME!(X,Y,17) = PlayerGame.foulCommitRating
+        plyrOff_GAME!(X,Y,19) = PlayerGame.fg3OfTotalFGAtt
+        plyrOff_GAME!(X,Y,20) = PlayerGame.fg3Pct
+        plyrOff_GAME!(X,Y,21) = PlayerGame.offReb40Minx10
+
+=======================================================================================================================
+plyrRat_GAME(X,Y,Z)
+    X is still the team index, visitor = 0 and home = 1
+    
+    Y is the player index, 0-13
+
+    Z is the rating value:
+        plyrRat_GAME(X,Y,0) = Player.gamesPlayed
+        plyrRat_GAME(X,Y,1) = Player.fgAtt
+        plyrRat_GAME(X,Y,2) = Player.fg3Pct
+        plyrRat_GAME(X,Y,3) = Player.fg3OfTotalFgAtt
+        plyrRat_GAME(X,Y,4) = Player.offReb40Minx10
+        plyrRat_GAME(X,Y,5) = Player.foulCommitRating
+        plyrRat_GAME(X,Y,6) = Player.foulDrawRating
+
+=======================================================================================================================
+FY%(X): X is team index, visitor = 0, home = 1
+    Calculated:  2 * Team.teamFGAPerG - Team.leagueFGAPerG
+
+    Looks like an adjusted pace measurement, e.g. adjusted field goals attempted per game vs. league average.
+    In new app, will be analogous to TeamGame._adjFGAPerG
+
+=======================================================================================================================
+rosterStatus(X,Y): Is player active or inactive for the game?
+    X is team index as above
+
+    Y is player index 0-13
+
+    Value was either -1 (inactive) or 0 (active)
+
+=======================================================================================================================
+teamAdj(X,Y)
+    X is team index as always
+
+    Y is adjusted rating:
+        teamAdj(X,0) =
+        teamAdj(X,1) =
+        teamAdj(X,2) = TeamGame.def3FGAvFGAAdj 
+        teamAdj(X,3) = Team.def3FGPctAdj
+        teamAdj(X,4) = TeamGame.offStealRating
+        teamAdj(X,5) = TeamGame.offTurnoverRating
+        teamAdj(X,6) = TeamGame.defTurnoverAdj
+        teamAdj(X,7) = TeamGame.defFoulAdj
+        teamAdj(X,8) = Team.ifUsing99 (not sure 8 was really necessary)
+
+=======================================================================================================================
+teamYears(X): just the Team.year, where X = 0 (visitor) or 1 (home)
+
+=======================================================================================================================
+playerFatigue%(X, Y): FUNCTION CALL to calculate player fatigue for team (X) player (Y)
+
+=======================================================================================================================
+plyrStaminaGame(I): Same as playerFatigue%, but adjusted for last 2 minutes / overtime (no fatigue) or foul out (0)
+    * Only used locally for ComputerCoach subroutine
+
+=======================================================================================================================
+defStrat(X): Defensive strategy, X = 0 (visitor) or 1 (home)
+    0 = SOLID MAN-TO-MAN
+    1 = PRESSURE MAN-TO-MAN
+    2 = 2-3 ZONE (PSV)
+    3 = 1-3-1 ZONE (TRAP)
+    4 = FULL COURT / SOLID M-M
+    5 = FULL COURT (R&J) / SOLID M-M
+    6 = FULL COURT (R&J) / PRESSURE M-M
+    7 = 2-2-1 ZN PRS (PSV) / 2-3 ZN (PSV)
+    8 = 2-2-1 ZN PRS (PSV) / SOLID M-M
+    9 = 2-2-1 ZN PRS (PSV) / PRESSURE M-M
+    10 = DIAMOND ZONE (TRAP) / SOLID M-M
+    11 = DIAMOND ZONE (TRAP) / PRESSURE M-M
+    12 = DIAMOND ZONE (TRAP) / 2-3 ZN (PSV)
+    13 = DIAMOND ZN / 1-3-1 ZN (TRAP)
+    14 = FULL COURT DENIAL (LAST 3 MIN)
+    15 = 3-2 ZONE (PSV)
+    16 = 2-2-1 ZN PRS (PSV) / 3-2 ZN (PSV)
+    17 = DIAMOND ZN (TRAP) / 3-2 ZN (PSV)
+
+
+Offensive Strategies:
+    Normal
+    Aggressive
+    Safe
+    Quick Offense (last 3 min)
+    Delay Offense (last 3 min)
+    Milk Shot CLock to 15 Sec (if shot clock)
+    Stall - only real good shot (must be within 10 pts)
+    Total Stall (last 3 min)
+    Hold Ball vs. Passive Zone (must be ahead, no shot clock)
+    Shoot Only 3s (last 3 min)
+    
