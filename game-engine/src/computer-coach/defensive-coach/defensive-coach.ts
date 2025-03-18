@@ -3,7 +3,9 @@ import { Rand100 } from "../../util";
 import { ComputerCoach } from "../computer-coach";
 
 export class DefensiveCoach {
-    private static _firstHalfStrategyWhenLosing() {
+    constructor(public cc: ComputerCoach) {}
+
+    private _firstHalfStrategyWhenLosing() {
         let defStrategy = DefensiveStrategy.SOLID_MTM;
         let rnd0 = Rand100();
 
@@ -27,7 +29,7 @@ export class DefensiveCoach {
     }
 
     // LHCCB used same defensive strategies in either half when winning.
-    private static _strategyWhenWinning() {
+    private _strategyWhenWinning() {
         let defStrategy = DefensiveStrategy.SOLID_MTM;
         let rnd0 = Rand100();
 
@@ -46,7 +48,7 @@ export class DefensiveCoach {
         return defStrategy;
     }
 
-    private static _secondHalfLosingByLessThan10Over5MinLeft() {
+    private _secondHalfLosingByLessThan10Over5MinLeft() {
         let defStrategy = DefensiveStrategy.SOLID_MTM;
         let rnd0 = Rand100();
 
@@ -63,7 +65,7 @@ export class DefensiveCoach {
         return defStrategy;
     }
 
-    private static _secondHalfLosingBy10To20Over5MinLeft() {
+    private _secondHalfLosingBy10To20Over5MinLeft() {
         let defStrategy = DefensiveStrategy.SOLID_MTM;
         let rnd0 = Rand100();
 
@@ -78,7 +80,7 @@ export class DefensiveCoach {
         return defStrategy;
     }
 
-    private static _secondHalfLosingBy20PlusOver5MinLeft() {
+    private _secondHalfLosingBy20PlusOver5MinLeft() {
         let defStrategy = DefensiveStrategy.SOLID_MTM;
         let rnd0 = Rand100();
 
@@ -93,9 +95,7 @@ export class DefensiveCoach {
         return defStrategy;
     }
 
-    private static _secondHalfLosingOver5Min(scoreDiff: number) {
-        scoreDiff = Math.abs(scoreDiff);
-
+    private _secondHalfLosingOver5Min(scoreDiff: number) {
         if (scoreDiff < 10) {
             return this._secondHalfLosingByLessThan10Over5MinLeft();
 
@@ -107,7 +107,7 @@ export class DefensiveCoach {
         }
     }
 
-    private static _secondHalfLosingByLessThan102To5MinLeft() {
+    private _secondHalfLosingByLessThan102To5MinLeft() {
         let defStrategy = DefensiveStrategy.SOLID_MTM;
         let rnd0 = Rand100();
 
@@ -122,7 +122,7 @@ export class DefensiveCoach {
         return defStrategy;
     }
 
-    private static _secondHalfLosingBy10To202To5MinLeft() {
+    private _secondHalfLosingBy10To202To5MinLeft() {
         let defStrategy = DefensiveStrategy.SOLID_MTM;
         let rnd0 = Rand100();
 
@@ -136,7 +136,7 @@ export class DefensiveCoach {
         return defStrategy;
     }
 
-    private static _secondHalfLosingBy20Plus2To5MinLeft() {
+    private _secondHalfLosingBy20Plus2To5MinLeft() {
         let defStrategy = DefensiveStrategy.SOLID_MTM;
         let rnd0 = Rand100();
 
@@ -151,9 +151,7 @@ export class DefensiveCoach {
         return defStrategy;
     }
 
-    private static _secondHalfLosing2To5Min(scoreDiff: number) {
-        scoreDiff = Math.abs(scoreDiff);
-
+    private _secondHalfLosing2To5Min(scoreDiff: number) {
         if (scoreDiff < 10) {
             return this._secondHalfLosingByLessThan102To5MinLeft();
 
@@ -165,9 +163,37 @@ export class DefensiveCoach {
         }
     }
 
-    static getStrategyRecommendation(cc: ComputerCoach) {
-        const scoreDiff = cc.getScoreDiff();
-        const g = cc.teamGame.game;
+    private _secondHalfLosingByLessThan5Under2MinLeft() {
+        let defStrategy = DefensiveStrategy.SOLID_MTM;
+        let rnd0 = Rand100();
+
+        switch (true) {
+            case (rnd0 >= 1 && rnd0 <= 15): defStrategy = DefensiveStrategy.FCP_RJ_SOLID_MTM; break;
+            case (rnd0 >= 16 && rnd0 <= 41): defStrategy = DefensiveStrategy.FCP_RJ_PRESSURE_MTM; break;
+            case (rnd0 >= 42 && rnd0 <= 63): defStrategy = DefensiveStrategy.DIAMOND_ZONE_PRESSURE_MTM; break;
+            case (rnd0 >= 64 && rnd0 <= 84): defStrategy = DefensiveStrategy.DIAMOND_ZONE_ZONE_131; break;
+            case (rnd0 >= 85 && rnd0 <= 100): defStrategy = DefensiveStrategy.PRESSURE_MTM; break;
+        }
+
+        return defStrategy;
+    }
+
+    private _secondHalfLosingUnder2Min(scoreDiff: number) {
+        if (scoreDiff < 5) {
+            return this._secondHalfLosingByLessThan5Under2MinLeft();
+
+        } else if (scoreDiff >= 10 && scoreDiff <= 20) {
+            // LEFT OFF HERE
+            return this._secondHalfLosingBy10To202To5MinLeft();
+
+        } else {
+            return this._secondHalfLosingBy20Plus2To5MinLeft();
+        }
+    }
+
+    getStrategyRecommendation() {
+        const scoreDiff = this.cc.getScoreDiff();
+        const g = this.cc.teamGame.game;
 
         if (scoreDiff >= 0) {
             return this._strategyWhenWinning();
@@ -177,10 +203,13 @@ export class DefensiveCoach {
         
         } else if (g.currHalf === 2) {
             if (g.gameClock >= 600) {
-                return this._secondHalfLosingOver5Min(scoreDiff);
+                return this._secondHalfLosingOver5Min(Math.abs(scoreDiff));
 
             } else if (g.gameClock >= 120 && g.gameClock < 600) {
-                return this._secondHalfLosing2To5Min(scoreDiff);
+                return this._secondHalfLosing2To5Min(Math.abs(scoreDiff));
+
+            } else if (g.gameClock >= 0 && g.gameClock < 120) {
+                return this._secondHalfLosingUnder2Min(Math.abs(scoreDiff));
             }
         }        
     }

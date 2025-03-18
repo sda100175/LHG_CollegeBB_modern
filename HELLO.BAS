@@ -12197,7 +12197,6 @@ Sub ComputerStrategy ()
 
                                 End Select
 
-' =====> CURSOR 2 <=====                
                             Case Is > 20
 
                                 Select Case RN0
@@ -12225,6 +12224,7 @@ Sub ComputerStrategy ()
 
                         Select Case scoreDiffOpp
 
+' =====> CURSOR 2 <=====                
                             Case Is <= 4
                                 'Opponent behind or within 4
 
