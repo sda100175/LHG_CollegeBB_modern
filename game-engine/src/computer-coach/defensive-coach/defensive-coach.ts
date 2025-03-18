@@ -46,7 +46,7 @@ export class DefensiveCoach {
         return defStrategy;
     }
 
-    private static _secondHalfLosingOver5MinWithin10() {
+    private static _secondHalfLosingByLessThan10Over5MinLeft() {
         let defStrategy = DefensiveStrategy.SOLID_MTM;
         let rnd0 = Rand100();
 
@@ -63,9 +63,47 @@ export class DefensiveCoach {
         return defStrategy;
     }
 
+    private static _secondHalfLosingBy10To20Over5MinLeft() {
+        let defStrategy = DefensiveStrategy.SOLID_MTM;
+        let rnd0 = Rand100();
+
+        switch (true) {
+            case (rnd0 >= 1 && rnd0 <= 57): defStrategy = DefensiveStrategy.SOLID_MTM; break;
+            case (rnd0 >= 58 && rnd0 <= 86): defStrategy = DefensiveStrategy.FCP_SOLID_MTM; break;
+            case (rnd0 >= 87 && rnd0 <= 94): defStrategy = DefensiveStrategy.PRESSURE_MTM; break;
+            case (rnd0 >= 95 && rnd0 <= 99): defStrategy = DefensiveStrategy.DIAMOND_ZONE_SOLID_MTM; break;
+            case (rnd0 === 100): defStrategy = DefensiveStrategy.DIAMOND_ZONE_PRESSURE_MTM; break;
+        }
+
+        return defStrategy;
+    }
+
+    private static _secondHalfLosingBy20PlusOver5MinLeft() {
+        let defStrategy = DefensiveStrategy.SOLID_MTM;
+        let rnd0 = Rand100();
+
+        switch (true) {
+            case (rnd0 >= 1 && rnd0 <= 42): defStrategy = DefensiveStrategy.SOLID_MTM; break;
+            case (rnd0 >= 43 && rnd0 <= 80): defStrategy = DefensiveStrategy.PRESSURE_MTM; break;
+            case (rnd0 >= 81 && rnd0 <= 92): defStrategy = DefensiveStrategy.FCP_RJ_PRESSURE_MTM; break;
+            case (rnd0 >= 93 && rnd0 <= 97): defStrategy = DefensiveStrategy.DIAMOND_ZONE_SOLID_MTM; break;
+            case (rnd0 >= 98 && rnd0 <= 100): defStrategy = DefensiveStrategy.DIAMOND_ZONE_PRESSURE_MTM; break;
+        }
+
+        return defStrategy;
+    }
+
     private static _secondHalfLosingOver5Min(scoreDiff: number) {
+        scoreDiff = Math.abs(scoreDiff);
+
         if (scoreDiff < 10) {
-            return this._secondHalfLosingOver5MinWithin10();
+            return this._secondHalfLosingByLessThan10Over5MinLeft();
+
+        } else if (scoreDiff >= 10 && scoreDiff <= 20) {
+            return this._secondHalfLosingBy10To20Over5MinLeft();
+
+        } else {
+            return this._secondHalfLosingBy20PlusOver5MinLeft();
         }
     }
 
