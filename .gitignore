@@ -3,7 +3,7 @@
 **/BASK*
 **/COLBBTMS*
 **/*.exe
-**/TeamData*
+**/team-decoder/**/TeamData*
 **/node_modules
 **/dist
 **/coverage
