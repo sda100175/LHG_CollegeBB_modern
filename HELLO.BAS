@@ -12224,7 +12224,6 @@ Sub ComputerStrategy ()
 
                         Select Case scoreDiffOpp
 
-' =====> CURSOR 2 <=====                
                             Case Is <= 4
                                 'Opponent behind or within 4
 
@@ -12251,6 +12250,7 @@ Sub ComputerStrategy ()
                                 'Opponent ahead by 5-10
                                 defStrat(P9) = 14
 
+' =====> CURSOR 2 <=====                
                             Case Is >= 11
                                 'Opponent ahead by 11+
 

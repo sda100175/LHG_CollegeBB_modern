@@ -178,16 +178,29 @@ export class DefensiveCoach {
         return defStrategy;
     }
 
+    private _secondHalfLosingByOver10Under2MinLeft() {
+        let defStrategy = DefensiveStrategy.SOLID_MTM;
+        let rnd0 = Rand100();
+
+        switch (true) {
+            case (rnd0 >= 1 && rnd0 <= 47): defStrategy = DefensiveStrategy.DIAMOND_ZONE_PRESSURE_MTM; break;
+            case (rnd0 >= 48 && rnd0 <= 93): defStrategy = DefensiveStrategy.DIAMOND_ZONE_ZONE_131; break;
+            case (rnd0 >= 94 && rnd0 <= 100): defStrategy = DefensiveStrategy.PRESSURE_MTM; break;
+        }
+
+        return defStrategy;
+    }
+
     private _secondHalfLosingUnder2Min(scoreDiff: number) {
         if (scoreDiff < 5) {
             return this._secondHalfLosingByLessThan5Under2MinLeft();
 
-        } else if (scoreDiff >= 10 && scoreDiff <= 20) {
-            // LEFT OFF HERE
-            return this._secondHalfLosingBy10To202To5MinLeft();
+        } else if (scoreDiff >= 5 && scoreDiff <= 10) {
+            // Only a single strategy used in the trailing by 5-10 under 2 min category
+            return DefensiveStrategy.FCP_MTM_DENIAL;
 
         } else {
-            return this._secondHalfLosingBy20Plus2To5MinLeft();
+            return this._secondHalfLosingByOver10Under2MinLeft();
         }
     }
 

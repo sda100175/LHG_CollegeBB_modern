@@ -379,4 +379,42 @@ describe('DefensiveCoach', () => {
         });
     });
 
+    describe('when losing in the second half, with under 2 minutes left left, by 5-10 points', () => {
+        beforeEach(() => {
+            cc = <ComputerCoach> {
+                teamGame: { game: { currHalf: 2, gameClock: 80 } },
+                getScoreDiff: () => -8
+            }
+            dc = new DefensiveCoach(cc);
+        });
+
+        it('selects FCP_MTM_DENIAL always', () => {
+            expect(dc.getStrategyRecommendation()).toEqual(DefensiveStrategy.FCP_MTM_DENIAL);
+        });
+    });
+
+    describe('when losing in the second half, with under 2 minutes left left, by more than 10 points', () => {
+        beforeEach(() => {
+            cc = <ComputerCoach> {
+                teamGame: { game: { currHalf: 2, gameClock: 80 } },
+                getScoreDiff: () => -13
+            }
+            dc = new DefensiveCoach(cc);
+        });
+
+        it('selects DIAMOND_ZONE_PRESSURE_MTM when random between 1-47', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(10);
+            expect(dc.getStrategyRecommendation()).toEqual(DefensiveStrategy.DIAMOND_ZONE_PRESSURE_MTM);
+        });
+
+        it('selects DIAMOND_ZONE_ZONE_131 when random between 48-93', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(70);
+            expect(dc.getStrategyRecommendation()).toEqual(DefensiveStrategy.DIAMOND_ZONE_ZONE_131);
+        });
+
+        it('selects PRESSURE_MTM when random is between 94-100', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(95);
+            expect(dc.getStrategyRecommendation()).toEqual(DefensiveStrategy.PRESSURE_MTM);
+        });
+    });
 });
