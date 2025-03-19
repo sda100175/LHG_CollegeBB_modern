@@ -1,6 +1,7 @@
 import { Game } from "../game/game";
 import { PlayerGame } from "../player-game/player-game";
-import { DefensiveStrategy, TeamGame } from "../team-game/team-game";
+import { DefensiveStrategy } from "../shared/strategy-helper";
+import { TeamGame } from "../team-game/team-game";
 
 class PlayerEval {
     game: Game;

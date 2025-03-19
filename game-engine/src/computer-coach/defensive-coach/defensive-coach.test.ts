@@ -1,4 +1,4 @@
-import { DefensiveStrategy } from "../../team-game/team-game";
+import { DefensiveStrategy } from "../../shared/strategy-helper";
 import * as utils from "../../util";
 import { ComputerCoach } from "../computer-coach";
 import { DefensiveCoach } from "./defensive-coach";

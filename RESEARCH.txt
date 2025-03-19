@@ -149,6 +149,9 @@ defStrat(X): Defensive strategy, X = 0 (visitor) or 1 (home)
     16 = 2-2-1 ZN PRS (PSV) / 3-2 ZN (PSV)
     17 = DIAMOND ZN (TRAP) / 3-2 ZN (PSV)
 
+=======================================================================================================================
+defCategory(teamIdx): See DefensiveFullCourtCategory, the number mappings are the same
+
 
 Offensive Strategies:
     Normal

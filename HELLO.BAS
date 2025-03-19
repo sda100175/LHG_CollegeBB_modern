@@ -12271,7 +12271,6 @@ Sub ComputerStrategy ()
                 End Select
 
 
-' =====> CURSOR 2 <=====                
             Case Is > 2
                 'Overtime strategy
 
@@ -12338,6 +12337,7 @@ Sub ComputerStrategy ()
     End If
 
 
+' =====> CURSOR 2 <=====                
     Call CategorizeDefense(P9)
 
 
