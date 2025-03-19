@@ -204,6 +204,21 @@ export class DefensiveCoach {
         }
     }
 
+    private _overtimeStrategy() {
+        let defStrategy = DefensiveStrategy.SOLID_MTM;
+        let rnd0 = Rand100();
+
+        switch (true) {
+            case (rnd0 >= 1 && rnd0 <= 32): defStrategy = DefensiveStrategy.SOLID_MTM; break;
+            case (rnd0 >= 33 && rnd0 <= 36): defStrategy = DefensiveStrategy.PRESSURE_MTM; break;
+            case (rnd0 >= 37 && rnd0 <= 50): defStrategy = DefensiveStrategy.FCP_SOLID_MTM; break;
+            case (rnd0 >= 51 && rnd0 <= 96): defStrategy = DefensiveStrategy.ZONE_23; break;
+            case (rnd0 >= 97 && rnd0 <= 100): defStrategy = DefensiveStrategy.ZONE_32; break;
+        }
+
+        return defStrategy;
+    }
+
     getStrategyRecommendation() {
         const scoreDiff = this.cc.getScoreDiff();
         const g = this.cc.teamGame.game;
@@ -224,6 +239,9 @@ export class DefensiveCoach {
             } else if (g.gameClock >= 0 && g.gameClock < 120) {
                 return this._secondHalfLosingUnder2Min(Math.abs(scoreDiff));
             }
-        }        
+        } else {
+            // Overtime strategy
+            return this._overtimeStrategy();
+        }       
     }
 }

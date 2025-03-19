@@ -417,4 +417,39 @@ describe('DefensiveCoach', () => {
             expect(dc.getStrategyRecommendation()).toEqual(DefensiveStrategy.PRESSURE_MTM);
         });
     });
+
+    describe('when losing in overtime', () => {
+        beforeEach(() => {
+            cc = <ComputerCoach> {
+                teamGame: { game: { currHalf: 3, gameClock: 400 } },
+                getScoreDiff: () => -4
+            }
+            dc = new DefensiveCoach(cc);
+        });
+
+        it('selects SOLID_MTM when random between 1-32', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(10);
+            expect(dc.getStrategyRecommendation()).toEqual(DefensiveStrategy.SOLID_MTM);
+        });
+
+        it('selects PRESSURE_MTM when random between 33-36', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(34);
+            expect(dc.getStrategyRecommendation()).toEqual(DefensiveStrategy.PRESSURE_MTM);
+        });
+
+        it('selects FCP_SOLID_MTM when random between 37-50', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(44);
+            expect(dc.getStrategyRecommendation()).toEqual(DefensiveStrategy.FCP_SOLID_MTM);
+        });
+
+        it('selects ZONE_23 when random between 51-96', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(77);
+            expect(dc.getStrategyRecommendation()).toEqual(DefensiveStrategy.ZONE_23);
+        });
+
+        it('selects ZONE_32 when random is between 97-100', () => {
+            jest.spyOn(utils, 'Rand100').mockReturnValue(99);
+            expect(dc.getStrategyRecommendation()).toEqual(DefensiveStrategy.ZONE_32);
+        });
+    });
 });

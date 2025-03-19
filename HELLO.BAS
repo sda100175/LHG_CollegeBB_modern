@@ -12250,7 +12250,6 @@ Sub ComputerStrategy ()
                                 'Opponent ahead by 5-10
                                 defStrat(P9) = 14
 
-' =====> CURSOR 2 <=====                
                             Case Is >= 11
                                 'Opponent ahead by 11+
 
@@ -12272,6 +12271,7 @@ Sub ComputerStrategy ()
                 End Select
 
 
+' =====> CURSOR 2 <=====                
             Case Is > 2
                 'Overtime strategy
 
