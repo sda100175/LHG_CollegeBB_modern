@@ -12337,7 +12337,6 @@ Sub ComputerStrategy ()
     End If
 
 
-' =====> CURSOR 2 <=====                
     Call CategorizeDefense(P9)
 
 
@@ -12346,6 +12345,7 @@ Sub ComputerStrategy ()
     ' **************************
     Call Rolld100(RN0)
 
+' =====> CURSOR 2 <=====                
     If currHalf = 1 Then
 
         Select Case RN0

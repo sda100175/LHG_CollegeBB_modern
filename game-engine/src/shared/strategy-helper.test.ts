@@ -1,4 +1,4 @@
-import { DefensiveStrategy, PressType, StrategyHelper } from "./strategy-helper";
+import { DefensiveStrategy, HalfCourtDefense, PressType, StrategyHelper } from "./strategy-helper";
 
 describe('StrategyHelper', () => {
     describe('getPressType', () => {
@@ -36,6 +36,56 @@ describe('StrategyHelper', () => {
             expect(StrategyHelper.getPressType(DefensiveStrategy.ZONE_23)).toEqual(PressType.NONE);
             expect(StrategyHelper.getPressType(DefensiveStrategy.ZONE_131)).toEqual(PressType.NONE);
             expect(StrategyHelper.getPressType(DefensiveStrategy.ZONE_32)).toEqual(PressType.NONE);
+        });
+    });
+
+    describe('getHalfCourtDefense', () => {
+        it('correctly identifies PRESSURE_MTM', () => {
+            expect(StrategyHelper.getHalfCourtDefense(DefensiveStrategy.PRESSURE_MTM))
+                .toEqual(HalfCourtDefense.PRESSURE_MTM);
+            expect(StrategyHelper.getHalfCourtDefense(DefensiveStrategy.FCP_RJ_PRESSURE_MTM))
+                .toEqual(HalfCourtDefense.PRESSURE_MTM);
+            expect(StrategyHelper.getHalfCourtDefense(DefensiveStrategy.ZONE_PRESS_221_PRESSURE_MTM))
+                .toEqual(HalfCourtDefense.PRESSURE_MTM);
+            expect(StrategyHelper.getHalfCourtDefense(DefensiveStrategy.DIAMOND_ZONE_PRESSURE_MTM))
+                .toEqual(HalfCourtDefense.PRESSURE_MTM);
+            expect(StrategyHelper.getHalfCourtDefense(DefensiveStrategy.FCP_MTM_DENIAL))
+                .toEqual(HalfCourtDefense.PRESSURE_MTM);
+        });
+
+        it('correctly identifies PASSIVE_ZONE', () => {
+            expect(StrategyHelper.getHalfCourtDefense(DefensiveStrategy.ZONE_23))
+                .toEqual(HalfCourtDefense.PASSIVE_ZONE);
+            expect(StrategyHelper.getHalfCourtDefense(DefensiveStrategy.ZONE_PRESS_221_ZONE_23))
+                .toEqual(HalfCourtDefense.PASSIVE_ZONE);
+            expect(StrategyHelper.getHalfCourtDefense(DefensiveStrategy.DIAMOND_ZONE_ZONE_23))
+                .toEqual(HalfCourtDefense.PASSIVE_ZONE);
+            expect(StrategyHelper.getHalfCourtDefense(DefensiveStrategy.ZONE_32))
+                .toEqual(HalfCourtDefense.PASSIVE_ZONE);
+            expect(StrategyHelper.getHalfCourtDefense(DefensiveStrategy.ZONE_PRESS_221_ZONE_32))
+                .toEqual(HalfCourtDefense.PASSIVE_ZONE);
+            expect(StrategyHelper.getHalfCourtDefense(DefensiveStrategy.DIAMOND_ZONE_ZONE_32))
+                .toEqual(HalfCourtDefense.PASSIVE_ZONE);
+        });
+
+        it('correctly identifies TRAPPING_ZONE', () => {
+            expect(StrategyHelper.getHalfCourtDefense(DefensiveStrategy.ZONE_131))
+                .toEqual(HalfCourtDefense.TRAPPING_ZONE);
+            expect(StrategyHelper.getHalfCourtDefense(DefensiveStrategy.DIAMOND_ZONE_ZONE_131))
+                .toEqual(HalfCourtDefense.TRAPPING_ZONE);
+        });
+
+        it('correctly identifies SOLID_MTM', () => {
+            expect(StrategyHelper.getHalfCourtDefense(DefensiveStrategy.SOLID_MTM))
+                .toEqual(HalfCourtDefense.SOLID_MTM);
+            expect(StrategyHelper.getHalfCourtDefense(DefensiveStrategy.FCP_SOLID_MTM))
+                .toEqual(HalfCourtDefense.SOLID_MTM);
+            expect(StrategyHelper.getHalfCourtDefense(DefensiveStrategy.FCP_RJ_SOLID_MTM))
+                .toEqual(HalfCourtDefense.SOLID_MTM);
+            expect(StrategyHelper.getHalfCourtDefense(DefensiveStrategy.ZONE_PRESS_221_SOLID_MTM))
+                .toEqual(HalfCourtDefense.SOLID_MTM);
+            expect(StrategyHelper.getHalfCourtDefense(DefensiveStrategy.DIAMOND_ZONE_SOLID_MTM))
+                .toEqual(HalfCourtDefense.SOLID_MTM);
         });
     });
 });

@@ -150,18 +150,32 @@ defStrat(X): Defensive strategy, X = 0 (visitor) or 1 (home)
     17 = DIAMOND ZN (TRAP) / 3-2 ZN (PSV)
 
 =======================================================================================================================
-defCategory(teamIdx): See DefensiveFullCourtCategory, the number mappings are the same
+defCategory(X): See DefensiveFullCourtCategory, the number mappings are the same
+    NONE = 0,  
+    TOKEN = 1,
+    RUN_AND_JUMP = 2,
+    ZONE = 3,
+    DIAMOND_ZONE = 4,
+    DENIAL_FOUL = 5
 
+=======================================================================================================================
+defCoverage(X): See HalfCourtDefense, number mappings are the same 
+    SOLID_MTM = 0,
+    PRESSURE_MTM = 1,
+    PASSIVE_ZONE = 2,
+    TRAPPING_ZONE = 3
 
-Offensive Strategies:
-    Normal
-    Aggressive
-    Safe
-    Quick Offense (last 3 min)
-    Delay Offense (last 3 min)
-    Milk Shot CLock to 15 Sec (if shot clock)
-    Stall - only real good shot (must be within 10 pts)
-    Total Stall (last 3 min)
-    Hold Ball vs. Passive Zone (must be ahead, no shot clock)
-    Shoot Only 3s (last 3 min)
+=======================================================================================================================
+offStrat(X): See OffensiveStrategy, Offensive strategy for selected team (X)
+    - ComputerCoach only uses values 0-4 and 9 best I can tell
+    0 = Normal
+    1 = Aggressive
+    2 = Safe
+    3 = Quick Offense (last 3 min)
+    4 = Delay Offense (last 3 min)
+    5 = Milk Shot CLock to 15 Sec (if shot clock)
+    6 = Stall - only real good shot (must be within 10 pts)
+    7 = Total Stall (last 3 min)
+    8 = Hold Ball vs. Passive Zone (must be ahead, no shot clock)
+    9 = Shoot Only 3s (last 3 min)
     
