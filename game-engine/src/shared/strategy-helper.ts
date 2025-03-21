@@ -2,7 +2,7 @@
 
 export enum OffensiveStrategy {
     NORMAL = 0,
-    AGGRESIVE = 1,
+    AGGRESSIVE = 1,
     SAFE = 2,
     QUICK = 3,
     DELAY = 4,

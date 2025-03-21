@@ -12345,7 +12345,6 @@ Sub ComputerStrategy ()
     ' **************************
     Call Rolld100(RN0)
 
-' =====> CURSOR 2 <=====                
     If currHalf = 1 Then
 
         Select Case RN0
@@ -12364,6 +12363,7 @@ Sub ComputerStrategy ()
     Else
         'currHalf >= 2
 
+' =====> CURSOR 2 <=====                
         If scoreDiffTm < 0 Then
             'We are behind
 
