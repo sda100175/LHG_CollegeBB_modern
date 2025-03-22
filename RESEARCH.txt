@@ -73,8 +73,12 @@ plyrOff_GAME!(X,Y,Z):
         plyrOff_GAME!(X,Y,20) = PlayerGame.fg3Pct
         plyrOff_GAME!(X,Y,21) = PlayerGame.offReb40Minx10
         plyrOff_GAME!(X,Y,22) = PlayerGame.isPlayingSafe
-            // Note: I changed the "playing safe" stuff, now you can set/unset it whenever. Simplifies things.
-            // When "playing safe", the foulCommitRating for the player is divided by 3, 
+            // When "playing safe", the foulCommitRating for the player is divided by 3
+            //      and the team defFGPctAdj is increased by one (for each player)
+            //      and STEALADJUST is affected (look into this)
+            // Only eligible to "play safe" when:
+            //      1) In first half, fouls >= (foulsToDQ - 3)
+            //      2) In later halves, fouls >= (foulsToDQ - 1) 
 
 =======================================================================================================================
 plyrRat_GAME(X,Y,Z)

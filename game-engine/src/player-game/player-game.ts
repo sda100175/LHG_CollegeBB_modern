@@ -1,4 +1,5 @@
 import { ShotClockOption } from "../game-settings/game-settings";
+import { Game } from "../game/game";
 import { Player } from "../player/player";
 import { Stats } from "../stats/stats";
 import { TeamGame } from "../team-game/team-game";
@@ -7,14 +8,17 @@ import { TeamGame } from "../team-game/team-game";
  * Represents a single game for a single player.
  */
 export class PlayerGame {
+    private _game: Game;  // convienence
     private _time = 1200;  // goes backward, starts at 20 min / 1,200 sec
     private _adjContribPct = -1;
     private _adjFoulDrawRating = -1;
+    private _isPlayingSafe = false;
 
     stats = new Stats();
-    isPlayingSafe = false;
     
-    constructor(public player: Player, public isInactive: boolean, public teamGame: TeamGame) {}
+    constructor(public player: Player, public isInactive: boolean, public teamGame: TeamGame) {
+        this._game = this.teamGame.game;
+    }
 
     /**
      * Contribution rate
@@ -39,7 +43,7 @@ export class PlayerGame {
         let fat = this.contribPct;
 
         // Adjust up contribution for no shot clock era, coaches used less players back then
-        if (this.teamGame.game.gameSettings.shotClock === ShotClockOption.NONE) {
+        if (this._game.gameSettings.shotClock === ShotClockOption.NONE) {
             fat *= 1.2;
         }
 
@@ -86,12 +90,42 @@ export class PlayerGame {
     /**
      * Has the player fouled out of this game?
      */
-    get isFouledOut() { return (this.stats.personalFouls >= this.teamGame.game.gameSettings.foulsToDisqualify) }
+    get isFouledOut() { return (this.stats.personalFouls >= this._game.gameSettings.foulsToDisqualify) }
+
+    /**
+     * Is this player currently "playing safe"?
+     */
+    get isPlayingSafe() { return this._isPlayingSafe; }
+
+    /**
+     * Set player to "play safe". Only eligible if 3 fouls or less left in 1st half, or 1 foul left in 2nd half.
+     */
+    set isPlayingSafe(safe: boolean) {
+        if (safe === false) {
+            this._isPlayingSafe = false;
+        } else if (this.isEligibleToPlaySafe()) {
+            this._isPlayingSafe = true;
+        }
+    }
 
     /**
      * Offensive rebounding prowess
      */
     get offReb40Minx10() { return this.player.offReb40Minx10 }
+
+    /**
+     * Is this player eligible to "play safe"?
+     * @returns {boolean} true if eligible to play safe
+     */
+    isEligibleToPlaySafe() {
+        if (this._game.currHalf === 1 && (this.stats.personalFouls >= (this._game.gameSettings.foulsToDisqualify - 3))) {
+            return true;
+        } else if (this.stats.personalFouls >= (this._game.gameSettings.foulsToDisqualify - 1)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * Inspect internal values of the class, mainly for debugging and testing.

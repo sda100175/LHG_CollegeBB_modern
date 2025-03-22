@@ -40,6 +40,7 @@ describe('TeamGame', () => {
             expect(htg.def3FGAvFGAAdj).toEqual(2);
             expect(htg.def3FGPctAdj).toEqual(0);
             expect(htg.stats).toBeTruthy();
+            expect(htg.defFGPctAdj).toEqual(-3);
             
             expect(vtg.control).toEqual(TeamGameControl.CPU);
         });        
@@ -67,7 +68,7 @@ describe('TeamGame', () => {
             }
         });
         
-        describe('checkLineup', () => {
+        describe('with a set lineup', () => {
             beforeEach(() => {
                 htg.lineup.push(htg.roster[0]);
                 htg.lineup.push(htg.roster[1]);
@@ -76,48 +77,58 @@ describe('TeamGame', () => {
                 htg.lineup.push(htg.roster[4]);
             });
 
-            it('reports no errors if lineup is valid', () => {
-                expect(() => htg.checkLineup()).not.toThrow();
-            });
+            it('adjusts defFGPctAdj for players playing safe', () => {
+                htg.lineup[0].stats.personalFouls = 2;
+                htg.lineup[1].stats.personalFouls = 2;
+                htg.lineup[0].isPlayingSafe = true;
+                htg.lineup[1].isPlayingSafe = true;
+                expect(htg.defFGPctAdj).toEqual(-1);
+            });    
 
-            it('throws an INCOMPLETE error if lineup is not full', () => {
-                htg.lineup.pop();
-                try {
-                    htg.checkLineup();
-                } catch (ce: any) {
-                    expect(ce).toBeInstanceOf(LineupError);
-                    expect(ce.code).toEqual(LineupErrorCode.INCOMPLETE);
-                }
-            });
-
-            it('throws a DUPLICATE_PLAYER error if lineup contains same player more than once', () => {
-                htg.lineup[4] = htg.lineup[0];
-                try {
-                    htg.checkLineup();
-                } catch (ce: any) {
-                    expect(ce).toBeInstanceOf(LineupError);
-                    expect(ce.code).toEqual(LineupErrorCode.DUPLICATE_PLAYER);
-                }
-            });
-
-            it('throws a INVALID_PLAYER error if lineup contains a player that was inactive', () => {
-                htg.lineup[4].isInactive = true;
-                try {
-                    htg.checkLineup();
-                } catch (ce: any) {
-                    expect(ce).toBeInstanceOf(LineupError);
-                    expect(ce.code).toEqual(LineupErrorCode.INVALID_PLAYER);
-                }
-            });
-
-            it('throws a INVALID_PLAYER error if lineup contains a player that has fouled out', () => {
-                htg.lineup[4].stats.personalFouls = 5;
-                try {
-                    htg.checkLineup();
-                } catch (ce: any) {
-                    expect(ce).toBeInstanceOf(LineupError);
-                    expect(ce.code).toEqual(LineupErrorCode.INVALID_PLAYER);
-                }
+            describe('checkLineup', () => {
+                it('reports no errors if lineup is valid', () => {
+                    expect(() => htg.checkLineup()).not.toThrow();
+                });
+    
+                it('throws an INCOMPLETE error if lineup is not full', () => {
+                    htg.lineup.pop();
+                    try {
+                        htg.checkLineup();
+                    } catch (ce: any) {
+                        expect(ce).toBeInstanceOf(LineupError);
+                        expect(ce.code).toEqual(LineupErrorCode.INCOMPLETE);
+                    }
+                });
+    
+                it('throws a DUPLICATE_PLAYER error if lineup contains same player more than once', () => {
+                    htg.lineup[4] = htg.lineup[0];
+                    try {
+                        htg.checkLineup();
+                    } catch (ce: any) {
+                        expect(ce).toBeInstanceOf(LineupError);
+                        expect(ce.code).toEqual(LineupErrorCode.DUPLICATE_PLAYER);
+                    }
+                });
+    
+                it('throws a INVALID_PLAYER error if lineup contains a player that was inactive', () => {
+                    htg.lineup[4].isInactive = true;
+                    try {
+                        htg.checkLineup();
+                    } catch (ce: any) {
+                        expect(ce).toBeInstanceOf(LineupError);
+                        expect(ce.code).toEqual(LineupErrorCode.INVALID_PLAYER);
+                    }
+                });
+    
+                it('throws a INVALID_PLAYER error if lineup contains a player that has fouled out', () => {
+                    htg.lineup[4].stats.personalFouls = 5;
+                    try {
+                        htg.checkLineup();
+                    } catch (ce: any) {
+                        expect(ce).toBeInstanceOf(LineupError);
+                        expect(ce.code).toEqual(LineupErrorCode.INVALID_PLAYER);
+                    }
+                });    
             });
         });
     });

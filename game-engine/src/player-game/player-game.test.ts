@@ -1,7 +1,7 @@
 import { PlayerGame } from "./player-game";
 import { makeGame } from "../../test_data/bootstrap-game";
-import { Game } from "../game/game";
 import { ShotClockOption } from "../game-settings/game-settings";
+import { Game } from "../game/game";
 
 describe('PlayerGame', () => {
     let g: Game;
@@ -53,6 +53,28 @@ describe('PlayerGame', () => {
         it('properly identifies a fouled out player', () => {
             pg.stats.personalFouls = 5;
             expect(pg.isFouledOut).toEqual(true);
+        });
+
+        describe('isPlayingSafe', () => {
+            it('disallows setting without proper conditions', () => {
+                pg.isPlayingSafe = true;
+                expect(pg.isPlayingSafe).toEqual(false);
+            });
+    
+            it('allows setting in 1st half with 3 or less fouls left', () => {
+                pg.stats.personalFouls = 2;
+                pg.isPlayingSafe = true;
+                expect(pg.isPlayingSafe).toEqual(true);
+            });
+    
+            it('allows setting in 2nd half with 1 foul left, and always allows setting to false', () => {
+                g.setGameClock(2, 600);
+                pg.stats.personalFouls = 4;
+                pg.isPlayingSafe = true;
+                expect(pg.isPlayingSafe).toEqual(true);
+                pg.isPlayingSafe = false;
+                expect(pg.isPlayingSafe).toEqual(false);
+            });    
         });
 
         describe('when using a XXX player with 0 values', () => {

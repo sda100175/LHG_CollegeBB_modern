@@ -120,6 +120,14 @@ export class TeamGame {
     get adjFGAPerG() { return 2 * this.team.teamFGAPerG - this.team.leagueFGAPerG }
 
     /**
+     * Adjusted FG pct allowed. Adds +1 for every player "playing safe" in the lineup.
+     */
+    get defFGPctAdj() {
+        const playingSafeAdj = this.lineup.filter(pg => pg.isPlayingSafe).length;
+        return this.team.defFGPctAdj + playingSafeAdj;
+    }
+
+    /**
      * Defensive 3pt shot taken rate
      */
     get def3FGAvFGAAdj() {
