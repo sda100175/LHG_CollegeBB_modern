@@ -11,6 +11,18 @@ export enum TeamGameControl {
     HUMAN = 1
 }
 
+export enum LineupErrorCode {
+    INCOMPLETE = 0,
+    INVALID_PLAYER = 1,
+    DUPLICATE_PLAYER = 2
+}
+
+export class LineupError extends Error {
+    constructor(public code: LineupErrorCode) {
+        super();
+    }
+}
+
 export class TeamGame {
     roster: PlayerGame[] = [];
     lineup: PlayerGame[] = [];
@@ -80,6 +92,26 @@ export class TeamGame {
                 this.roster.push(new PlayerGame(p, isInactive, this));                    
             });    
         } while ( (actives < 10 && inactives < 4) || (inactives >= 5 && actives < 8));
+    }
+
+    /**
+     * Check lineup for validity. Used to validate human coach moves.
+     * @throws {LineupError} Error explaining a problem with the lineup.
+     */
+    checkLineup() {
+        if (this.lineup.length !== 5) {
+            throw new LineupError(LineupErrorCode.INCOMPLETE);
+        }
+
+        const uniques = [...new Set(this.lineup)];
+        if (uniques.length !== 5) {
+            throw new LineupError(LineupErrorCode.DUPLICATE_PLAYER);
+        }
+
+        const valids = this.lineup.filter(pg => pg.isInactive === false && pg.isFouledOut === false);
+        if (valids.length !== 5) {
+            throw new LineupError(LineupErrorCode.INVALID_PLAYER);
+        }
     }
 
     /**

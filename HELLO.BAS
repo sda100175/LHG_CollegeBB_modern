@@ -9086,7 +9086,6 @@ Sub ComputerCoach ()
     Next I
 
     Call ComputerStrategy
-    ' =====> CURSOR 1 <=====
 
 End Sub
 
