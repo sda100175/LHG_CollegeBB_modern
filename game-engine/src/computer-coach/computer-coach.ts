@@ -2,6 +2,8 @@ import { Game } from "../game/game";
 import { PlayerGame } from "../player-game/player-game";
 import { DefensiveStrategy } from "../shared/strategy-helper";
 import { TeamGame } from "../team-game/team-game";
+import { DefensiveCoach } from "./defensive-coach/defensive-coach";
+import { OffensiveCoach } from "./offensive-coach/offensive-coach";
 
 class PlayerEval {
     game: Game;
@@ -88,8 +90,13 @@ class PlayerEval {
 }
 
 export class ComputerCoach {
+    defCoach: DefensiveCoach;
+    offCoach: OffensiveCoach;
+
     constructor(public teamGame: TeamGame) {
-        this.setLineup();
+        this.defCoach = new DefensiveCoach(this);
+        this.offCoach = new OffensiveCoach(this);
+        this.makeCoachingDecisions();
     }
 
     // Make lineup out by who has most contribution left. Can avoid players in foul trouble or players "over-contributing"
@@ -121,6 +128,11 @@ export class ComputerCoach {
         }
 
         return lineup;
+    }
+
+    makeCoachingDecisions() {
+        this.setLineup();
+        this.setStrategy();
     }
 
     getOpposingTeamGame() {
@@ -156,10 +168,8 @@ export class ComputerCoach {
     }
 
     setStrategy() {
-        let defStrategy = DefensiveStrategy.SOLID_MTM;
-        const scoreDiff = this.getScoreDiff();
-
-        
+        this.teamGame.defStrategy = this.defCoach.getStrategyRecommendation();
+        this.teamGame.offStrategy = this.offCoach.getStrategyRecommendation();        
     }
 
     /**

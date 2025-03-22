@@ -1,7 +1,7 @@
 import { Game } from "../game/game";
 import { PlayerGame } from "../player-game/player-game";
 import { Player } from "../player/player";
-import { DefensiveStrategy } from "../shared/strategy-helper";
+import { DefensiveStrategy, OffensiveStrategy } from "../shared/strategy-helper";
 import { Stats } from "../stats/stats";
 import { Team } from "../team/team";
 import { Rand100 } from "../util";
@@ -15,7 +15,8 @@ export class TeamGame {
     roster: PlayerGame[] = [];
     lineup: PlayerGame[] = [];
     defStrategy = DefensiveStrategy.SOLID_MTM;
-
+    offStrategy = OffensiveStrategy.NORMAL;
+    
     constructor(public team: Team, public control: TeamGameControl, public game: Game) {
         this._initRoster();
         this._adjustContribPct(game.gameAvgStamina);

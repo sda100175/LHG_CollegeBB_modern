@@ -12362,8 +12362,6 @@ Sub ComputerStrategy ()
 
     Else
         'currHalf >= 2
-
-' =====> CURSOR 2 <=====                
         If scoreDiffTm < 0 Then
             'We are behind
 

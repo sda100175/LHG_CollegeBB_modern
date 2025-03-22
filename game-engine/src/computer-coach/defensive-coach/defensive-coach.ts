@@ -220,28 +220,31 @@ export class DefensiveCoach {
     }
 
     getStrategyRecommendation() {
+        let defStrategy = DefensiveStrategy.SOLID_MTM;
         const scoreDiff = this.cc.getScoreDiff();
         const g = this.cc.teamGame.game;
 
         if (scoreDiff >= 0) {
-            return this._strategyWhenWinning();
+            defStrategy = this._strategyWhenWinning();
 
         } else if (g.currHalf === 1 && scoreDiff < 0) {
-            return this._firstHalfStrategyWhenLosing();
+            defStrategy = this._firstHalfStrategyWhenLosing();
         
         } else if (g.currHalf === 2) {
             if (g.gameClock >= 600) {
-                return this._secondHalfLosingOver5Min(Math.abs(scoreDiff));
+                defStrategy = this._secondHalfLosingOver5Min(Math.abs(scoreDiff));
 
             } else if (g.gameClock >= 120 && g.gameClock < 600) {
-                return this._secondHalfLosing2To5Min(Math.abs(scoreDiff));
+                defStrategy = this._secondHalfLosing2To5Min(Math.abs(scoreDiff));
 
             } else if (g.gameClock >= 0 && g.gameClock < 120) {
-                return this._secondHalfLosingUnder2Min(Math.abs(scoreDiff));
+                defStrategy = this._secondHalfLosingUnder2Min(Math.abs(scoreDiff));
             }
         } else {
             // Overtime strategy
-            return this._overtimeStrategy();
+            defStrategy = this._overtimeStrategy();
         }       
+
+        return defStrategy;
     }
 }
