@@ -10828,7 +10828,6 @@ End Sub
 'players who are taking it safe on defense
 'and determine if they should play normal.
 Sub PlayItSafe ()
-
     Cls
 
     Color 15
@@ -10838,6 +10837,7 @@ Sub PlayItSafe ()
     S3 = 1
     SW = 0
 
+    ' =====> CURSOR 1 <=====
     For ZZ = 0 To 4
 
         If plyrOff_GAME!(P9, lineupIdx(P9, ZZ), 22) = 50 Then

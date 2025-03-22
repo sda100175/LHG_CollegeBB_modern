@@ -22,6 +22,7 @@ describe('PlayerGame', () => {
             expect(pg.defReb40Minx10).toEqual(68);
             expect(pg.offReb40Minx10).toEqual(32);
             expect(pg.isFouledOut).toEqual(false);
+            expect(pg.isPlayingSafe).toEqual(false);
         });    
 
         it('properly handles contribPct', () => {

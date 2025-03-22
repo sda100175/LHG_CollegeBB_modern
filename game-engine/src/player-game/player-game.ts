@@ -12,6 +12,7 @@ export class PlayerGame {
     private _adjFoulDrawRating = -1;
 
     stats = new Stats();
+    isPlayingSafe = false;
     
     constructor(public player: Player, public isInactive: boolean, public teamGame: TeamGame) {}
 

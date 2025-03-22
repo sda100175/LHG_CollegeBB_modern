@@ -72,6 +72,9 @@ plyrOff_GAME!(X,Y,Z):
         plyrOff_GAME!(X,Y,19) = PlayerGame.fg3OfTotalFGAtt
         plyrOff_GAME!(X,Y,20) = PlayerGame.fg3Pct
         plyrOff_GAME!(X,Y,21) = PlayerGame.offReb40Minx10
+        plyrOff_GAME!(X,Y,22) = PlayerGame.isPlayingSafe
+            // Note: I changed the "playing safe" stuff, now you can set/unset it whenever. Simplifies things.
+            // When "playing safe", the foulCommitRating for the player is divided by 3, 
 
 =======================================================================================================================
 plyrRat_GAME(X,Y,Z)
