@@ -1270,19 +1270,28 @@ Sub COLHOOP ()
             Call PlayItSafe
         End If
 
+        ' =====> CURSOR 1 <=====
         If threePtOpt = 1 Then
 
             'Adjust foul draw rating based on 3-pt contributions??
+            ' For each player on the roster...
             For I = 0 To 13
 
+                ' plyrOff_GAME!(X,Y,19) = PlayerGame.fg3OfTotalFGAtt
                 M8 = 100 - plyrOff_GAME!(P9, I, 19)
+                ' MCCOY M8 = 35, MASSENBURG M8 = 100
 
                 If M8 <> 0 Then
                     M9 = 100 / M8
+                    ' MCCOY M9 = 2.86, MASSENBURG M9 = 1
                 End If
 
+                ' plyrOff_GAME!(X,Y,16) = PlayerGame.foulDrawRating
                 plyrOff_GAME!(P9, I, 16) = CInt((plyrOff_GAME!(P9, I, 16) * M9))
-
+                ' MCCOY base foulDrawRating = 9, adjusted = (9 * 2.86) = 25.74
+                ' MASSENBURG base foulDrawRating = 14, adjusted = (14 * 1) = 14
+                
+                ' I'm not exactly sure why the game makes this adjustment, it doesn't make logical sense to me.
             Next I
 
         End If
@@ -10837,7 +10846,6 @@ Sub PlayItSafe ()
     S3 = 1
     SW = 0
 
-    ' =====> CURSOR 1 <=====
     For ZZ = 0 To 4
 
         If plyrOff_GAME!(P9, lineupIdx(P9, ZZ), 22) = 50 Then

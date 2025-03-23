@@ -57,8 +57,8 @@ plyrOff_GAME!(X,Y,Z):
     Z is the rating value:
         plyrOff_GAME!(X,Y,0) = Player.adjFgPct
         plyrOff_GAME!(X,Y,1) = Player.ftPct
-        plyrOff_GAME!(X,Y,2) = Player.defReb40Minx10 (or PlayerGame.defReb40Minx10)
-        plyrOff_GAME!(X,Y,3) = Player.contribPct (PlayerGame.contribPct)
+        plyrOff_GAME!(X,Y,2) = PlayerGame.defReb40Minx10
+        plyrOff_GAME!(X,Y,3) = PlayerGame.contribPct
         plyrOff_GAME!(X,Y,4) = Player.assistRating
         plyrOff_GAME!(X,Y,5) = Player.stealRating
         plyrOff_GAME!(X,Y,6) = Player.blockRating
@@ -69,16 +69,12 @@ plyrOff_GAME!(X,Y,Z):
         
         plyrOff_GAME!(X,Y,16) = PlayerGame.foulDrawRating
         plyrOff_GAME!(X,Y,17) = PlayerGame.foulCommitRating
+        plyrOff_GAME!(X,Y,18) = (looks like either steals or turnovers stat category)
         plyrOff_GAME!(X,Y,19) = PlayerGame.fg3OfTotalFGAtt
         plyrOff_GAME!(X,Y,20) = PlayerGame.fg3Pct
         plyrOff_GAME!(X,Y,21) = PlayerGame.offReb40Minx10
         plyrOff_GAME!(X,Y,22) = PlayerGame.isPlayingSafe
-            // When "playing safe", the foulCommitRating for the player is divided by 3
-            //      and the team defFGPctAdj is increased by one (for each player)
-            //      and STEALADJUST is affected (look into this)
-            // Only eligible to "play safe" when:
-            //      1) In first half, fouls >= (foulsToDQ - 3)
-            //      2) In later halves, fouls >= (foulsToDQ - 1) 
+        plyrOff_GAME!(X,Y,23) = (looks like either steals or turnovers stat category, whatever 18 isn't)
 
 =======================================================================================================================
 plyrRat_GAME(X,Y,Z)
@@ -115,8 +111,8 @@ teamAdj(X,Y)
     X is team index as always
 
     Y is adjusted rating:
-        teamAdj(X,0) =
-        teamAdj(X,1) =
+        teamAdj(X,0) = TeamGame.foulCommitRatingSum
+        teamAdj(X,1) = adds up item 18 for lineup players (either steals or turnovers), I don't see it used in game engine
         teamAdj(X,2) = TeamGame.def3FGAvFGAAdj 
         teamAdj(X,3) = Team.def3FGPctAdj
         teamAdj(X,4) = TeamGame.offStealRating

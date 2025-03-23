@@ -15,7 +15,7 @@ describe('PlayerGame', () => {
         });    
         
         it('initializes correctly', () => {
-            expect(pg.inspect()).toEqual({ _time: 1200 });
+            expect(pg.inspect()).toMatchObject({ _time: 1200 });
             expect(pg.foulCommitRating).toEqual(24);
             expect(pg.fg3Pct).toEqual(53);
             expect(pg.fg3OfTotalFgAtt).toEqual(4);
@@ -32,8 +32,10 @@ describe('PlayerGame', () => {
         });    
 
         it('properly handles foulDrawRating', () => {
-            expect(pg.foulDrawRating).toEqual(10);    
+            expect(pg.foulDrawRating).toBeCloseTo(10.4, 1);    
             pg.foulDrawRating = 3;
+            expect(pg.foulDrawRating).toBeCloseTo(3.12, 2);
+            g.gameSettings.threePtShots = false;
             expect(pg.foulDrawRating).toEqual(3);
         });    
 
@@ -55,6 +57,21 @@ describe('PlayerGame', () => {
             expect(pg.isFouledOut).toEqual(true);
         });
 
+        describe('when exercising the 99 logic', () => {
+            beforeEach(() => {
+                const hcust = { ifUsing99: 0 };
+                g = makeGame('90 DUKE', '90 MARYLAND', { hcust });
+                pg = g.homeTeamGame.roster[0];
+            });
+        
+            it('makes foulDrawRating adjustments correctly', () => {
+                // MUSTAF base foulDrawRating = 10
+                //   Adjusted for 99 logic with game stamina of 128.5 = 10 * (120 / 128.5) = 9.34
+                //   Adjusted for 3pt shots (9.34 * 1.04) = ~9.71
+                expect(pg.foulDrawRating).toBeCloseTo(9.7, 1);
+            });        
+        });
+    
         describe('isPlayingSafe', () => {
             it('disallows setting without proper conditions', () => {
                 pg.isPlayingSafe = true;

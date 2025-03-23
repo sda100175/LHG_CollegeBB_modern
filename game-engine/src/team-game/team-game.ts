@@ -32,7 +32,6 @@ export class TeamGame {
     constructor(public team: Team, public control: TeamGameControl, public game: Game) {
         this._initRoster();
         this._adjustContribPct(game.gameAvgStamina);
-        this._adjustFoulDrawRating(game.gameAvgStamina);
     }
 
     private _checkIfInactive(p: Player) {
@@ -65,15 +64,6 @@ export class TeamGame {
                 if (pg.contribPct < 1) { pg.contribPct = 1 }
             }
         });
-    }
-
-    // Adjusts stamina if '99' stats not used
-    private _adjustFoulDrawRating(gameAvgStamina: number) {
-        if (this.team.ifUsing99 !== 99 && gameAvgStamina > 120) {
-            this.roster.forEach(pg => {
-                pg.foulDrawRating = pg.foulDrawRating * (120 / gameAvgStamina)
-            });
-        }
     }
 
     // Ensures adequate roster construction, enough actives, inactivate placeholders, etc.
@@ -165,6 +155,13 @@ export class TeamGame {
         } else {
             return this.team.defTurnoverAdj;
         }
+    }
+
+    /**
+     * Sum of foulCommitRating for players currently in the lineup.
+     */
+    get foulCommitRatingSum() {
+        return this.lineup.map(pg => pg.foulCommitRating).reduce((acc, v) => acc + v);
     }
 
     /**

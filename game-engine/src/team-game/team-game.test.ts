@@ -53,6 +53,7 @@ describe('TeamGame', () => {
 
         it('initializes foul draw ratings correctly', () => {
             // No foul draw adjustments here (stock teams use '99')
+            g.gameSettings.threePtShots = false;  // avoid the 3pt adjustment for foulDrawRating here
             const pg = htg.roster[0];
             expect(pg.foulDrawRating).toEqual(10);
         });
@@ -84,6 +85,10 @@ describe('TeamGame', () => {
                 htg.lineup[1].isPlayingSafe = true;
                 expect(htg.defFGPctAdj).toEqual(-1);
             });    
+
+            it('calculates foulCommitRatingSum properly', () => {
+                expect(htg.foulCommitRatingSum).toEqual(189);
+            });
 
             describe('checkLineup', () => {
                 it('reports no errors if lineup is valid', () => {
@@ -169,10 +174,6 @@ describe('TeamGame', () => {
             expect(htg.defTurnoverAdj).toEqual(0);
             expect(htg.defFoulAdj).toEqual(0);
             expect(htg.offTurnoverRating).toEqual(4);
-
-            // Adjusted foul draw (avg stamina for this game is 128.5)
-            let pg = htg.roster[0]; // MUSTAF, 10 * (120 / 128.5) <0.934> = 9.34
-            expect(pg.foulDrawRating).toBeCloseTo(9.34, 2);
         });        
     });
 });

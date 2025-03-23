@@ -68,10 +68,9 @@ export class PlayerGame {
         return (this.player.foulCommitRating === 0) ? 40 : this.player.foulCommitRating;
     }
 
-    /**
-     * Gets propensity for drawing fouls.
-     */
-    get foulDrawRating() {
+    // Get the "base" foul draw rating for this game. Can be set by the game, pulled from the 
+    // player ratings, or defaults to 6.
+    private _getBaseFoulDrawRating() {
         if (this._adjFoulDrawRating > 0) {
             return this._adjFoulDrawRating;
         } else if (this.player.foulDrawRating === 0) {
@@ -79,6 +78,35 @@ export class PlayerGame {
         } else {
             return this.player.foulDrawRating;
         }
+    }
+
+    // For "non-99" team ratings, if game stamina is over 120, adjust foul draw rating down some.
+    private _adjustFoulDrawRatingForGameStamina(rating: number) {
+        if (this.teamGame.team.ifUsing99 !== 99 && this._game.gameAvgStamina > 120) {
+            rating *= (120 / this._game.gameAvgStamina);
+        }
+
+        return rating;
+    }
+
+    /**
+     * Gets propensity for drawing fouls.
+     */
+    get foulDrawRating() {
+        let rating = this._getBaseFoulDrawRating();
+        rating = this._adjustFoulDrawRatingForGameStamina(rating);
+                
+        // LHCCB made a strange adjustment to this based on 3-pt shot propensity.
+        // I'm not sure why it did this, but re-creating it here.
+        if (this._game.gameSettings.threePtShots) {
+            const twoPtAttPct = 100 - this.fg3OfTotalFgAtt;
+            if (twoPtAttPct > 0) {
+                const adjustment = 100 / twoPtAttPct;
+                rating = rating * adjustment;
+            }
+        }
+
+        return rating;
     }
 
     /**
@@ -133,7 +161,8 @@ export class PlayerGame {
      */
     inspect() {
         return {
-            _time: this._time
+            _time: this._time,
+            _adjFoulDrawRating: this._adjFoulDrawRating
         }
     }
 }
