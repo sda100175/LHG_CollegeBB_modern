@@ -1613,7 +1613,6 @@ Sub COLHOOP ()
 
     scoreDiffOp = score(D, 0) - score(P, 0)
 
-    ' =====> CURSOR 1 <=====
     'Last 5 seconds, down by 1 score!!!
     If gameClock! <= 5 And (threePtOpt = 1 And scoreDiffOp <= 3 Or threePtOpt = 0 And scoreDiffOp <= 2) And scoreDiffOp >= 0 And currHalf >= 2 Then
 
@@ -1701,6 +1700,7 @@ Sub COLHOOP ()
 
         End If
 
+        ' =====> CURSOR 1 <=====
         If I1% = 2 Then
 
             rndFtLine = Int(Rnd(1) * 45) + 45

@@ -103,7 +103,7 @@ export class Game {
         }
 
         // Record time elapsed for both game and players.
-        this._updateTimeElapsed(play.timeElapsed);
+        if (play.data.timeElapsed) { this._updateTimeElapsed(play.data.timeElapsed) }
 
         // Push to play-by-play log
         this._playByPlay.addPlay(play);
@@ -139,7 +139,7 @@ export class Game {
         const jump = Rand1();
         this._setPossession(jump === 0 ? this.visitorTeamGame : this.homeTeamGame);
         this._setPossArrow(this._defTeam);
-        return this._recordPlay(new Play(PlayType.JUMP_BALL, this._offTeam, null, 1));
+        return this._recordPlay(new Play(PlayType.JUMP_BALL, { team: this._offTeam, timeElapsed: 1 }));
     }
 
     private _resetShotClock() {
@@ -159,6 +159,8 @@ export class Game {
 
     get currHalf() { return this._currHalf }
 
+    get defTeam() { return this._defTeam }
+
     get location() { 
         return (this.gameSettings.location === GameLocation.NEUTRAL_SITE) 
             ? 'NEUTRAL SITE' 
@@ -170,6 +172,8 @@ export class Game {
     get gameClock() { return this._gameClock }
 
     get playByPlay() { return this._playByPlay }
+
+    get offTeam() { return this._offTeam }
 
     get possArrow() { return this._possArrow }
 
@@ -189,13 +193,13 @@ export class Game {
         const endOfFirstHalf = this._currHalf === 1 && this._gameClock === 0;
 
         if (endOfFirstHalf) {
-            return this._recordPlay(new Play(PlayType.END_OF_HALF, null, null, 0));
+            return this._recordPlay(new Play(PlayType.END_OF_HALF, {}));
 
         } else if (this.isGameOver()) {
-            return this._recordPlay(new Play(PlayType.END_OF_GAME, null, null, 0));
+            return this._recordPlay(new Play(PlayType.END_OF_GAME, {}));
 
         } else if (this._needsOvertime()) {
-            return this._recordPlay(new Play(PlayType.END_OF_HALF, null, null, 0));
+            return this._recordPlay(new Play(PlayType.END_OF_HALF, {}));
         }
 
         return null;
@@ -209,7 +213,7 @@ export class Game {
         this.homeTeamGame.resetFoulsForHalf();    
         this._setPossession(this._possArrow);
         this._setPossArrow();
-        return this._recordPlay(new Play(PlayType.INBOUND_BALL, this._offTeam, null, 1));
+        return this._recordPlay(new Play(PlayType.INBOUND_BALL, { team: this._offTeam, timeElapsed: 1 }));
     }
 
     // Start overtime
@@ -233,6 +237,7 @@ export class Game {
 
     // "Last 5 sec" situation - execute the play return the result. 
     private _executeLast5SecSituation() {
+        // Set computer offense strategy if necessary.
         if (this._offTeam.control === TeamGameControl.CPU) {
             this._offTeam.setLast5SecStrategy();
         }
@@ -257,7 +262,7 @@ export class Game {
         // A very close-and-late game, set computer strategy and/or allow human to set theirs.
         if (StrategyHelper.isLast5SecSituation(this)) {
             if (lp?.type !== PlayType.LAST_5_SEC_SITUATION) {
-                return this._recordPlay(new Play(PlayType.LAST_5_SEC_SITUATION, null, null, 0));
+                return this._recordPlay(new Play(PlayType.LAST_5_SEC_SITUATION, {}));
             } else {
                 return this._executeLast5SecSituation();
             }
@@ -268,7 +273,7 @@ export class Game {
         if (lp?.coachingAllowed) { this._setStrategyForBothTeams() }
 
         // Something goofy happened, this should never reach.
-        return new Play(PlayType.NO_OP, null, null, 0);
+        return new Play(PlayType.NO_OP, {});
     }
 
     /**
@@ -293,7 +298,7 @@ export class Game {
         if (this._atEndOfHalf() && this._currHalf > 1) { return this._initOvertime() }
 
         // Function was probably called out of context, use this.next() instead.
-        return new Play(PlayType.NO_OP, null, null, 0);
+        return new Play(PlayType.NO_OP, {});
     }
 
     /**

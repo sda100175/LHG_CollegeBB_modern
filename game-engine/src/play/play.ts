@@ -10,7 +10,20 @@ export enum PlayType {
     END_OF_GAME = 4,
     FG_MADE_2PT = 5,
     FG_MISS_2PT = 6,
-    LAST_5_SEC_SITUATION = 7   // 5 or less seconds left and offensive team down by one score or less
+    LAST_5_SEC_SITUATION = 7,       // 5 or less seconds left and offensive team down by one score or less
+    L5S_LONG_PASS_INTERCEPTED = 8,  // last play was a long inbounds intercepted, time expired
+    L5S_FG_MADE_BACKCOURT_2PT = 9,  // last play was a long 2pt from the back court
+    L5S_FG_MADE_BACKCOURT_3PT = 10  // last play was a long 3pt from the back court
+}
+
+/**
+ * Data associated with a given play. Many play types don't require all of it.
+ */
+export interface IPlayData {
+    team?: TeamGame;
+    player?: PlayerGame;
+    assistPlayer?: PlayerGame;  // generally assisting player on made shot
+    timeElapsed?: number;
 }
 
 /**
@@ -19,26 +32,38 @@ export enum PlayType {
 export class Play {
     private _stats: Stats;
     
-    constructor(public type: PlayType, public team: TeamGame | null, public player: PlayerGame | null,
-        public timeElapsed: number, apply = true
-    ) {
+    constructor(public type: PlayType, public data: IPlayData, apply = true) {
         this._stats = new Stats();
         this._setStats();
 
-        if (apply && this.player) { this.player.stats.add(this._stats) }
+        if (apply) { this._applyStatsToPlayers() }
+    }
+
+    private _applyStatsToPlayers() {
+        if (this.data.player) { this.data.player.stats.add(this._stats) }
+
+        if (this.data.assistPlayer) { 
+            this._stats.assists = 1;
+            this.data.assistPlayer.stats.assists += 1;
+        }
     }
 
     // Based on play type, update the stats for this play.
     private _setStats() {
         switch (this.type) {
             case PlayType.FG_MADE_2PT:
+            case PlayType.L5S_FG_MADE_BACKCOURT_2PT:
                 this._stats.fieldGoalsAtt = 1;
                 this._stats.fieldGoalsMade = 1;
                 this._stats.pointsScored = 2;
                 break;
             case PlayType.FG_MISS_2PT:
                 this._stats.fieldGoalsAtt = 1;
-                this._stats.fieldGoalsMade = 1;
+                break;
+            case PlayType.L5S_FG_MADE_BACKCOURT_3PT:
+                this._stats.fieldGoals3PtAtt = 1;
+                this._stats.fieldGoals3PtMade = 1;
+                this._stats.pointsScored = 3;
                 break;
             default:
                 break;  // This type has no associated stats to record.
