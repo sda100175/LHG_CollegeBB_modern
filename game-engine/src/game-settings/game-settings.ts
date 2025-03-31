@@ -1,3 +1,10 @@
+// Note: LHCCB is a game stuck in the early 1990's.
+// The rule swaps below are really from about 1993 and earlier.
+// Some have been updated, like the shot clock options.
+// But it is missing a few things that have been updated more recently (this is not an exhaustive list):
+//      Timeouts (down to 4 and there are "use-it-or-lose-it" rules)
+//      Media timeouts (16, 12, 8, 4)
+
 import { IsBoolean, IsEnum, IsInt, validateSync } from "class-validator";
 
 export enum PlayerOption {

@@ -1,4 +1,5 @@
-import { OffensiveStrategy } from "../../shared/strategy-helper";
+import { Game } from "../../game/game";
+import { LastFiveSecStrategy, OffensiveStrategy, StrategyHelper } from "../../shared/strategy-helper";
 import { Rand100 } from "../../util";
 import { ComputerCoach } from "../computer-coach";
 
@@ -68,6 +69,41 @@ export class OffensiveCoach {
 
         } else {
             return this._secondHalfOrLaterLosingOver3Min();
+        }
+    }
+
+    private _last3To5SecStrategy(scoreDiff: number, g: Game) {
+        if (g.gameSettings.threePtShots === false) {
+            return LastFiveSecStrategy.WORK_FLOOR_SHOOT_2P;
+        } else if (scoreDiff === -3) {
+            return LastFiveSecStrategy.WORK_FLOOR_SHOOT_3P;
+        } else if (Rand100() <= 50) {
+            return LastFiveSecStrategy.WORK_FLOOR_SHOOT_2P;
+        } else {
+            return LastFiveSecStrategy.WORK_FLOOR_SHOOT_3P;
+        }
+    }
+
+    private _last3SecStrategy(scoreDiff: number, g: Game) {
+        if (g.gameSettings.threePtShots === false) {
+            return LastFiveSecStrategy.FULL_COURT_PASS_SHOOT_2P;
+        } else if (scoreDiff === -3) {
+            return LastFiveSecStrategy.FULL_COURT_PASS_SHOOT_3P;
+        } else if (Rand100() <= 50) {
+            return LastFiveSecStrategy.FULL_COURT_PASS_SHOOT_2P;
+        } else {
+            return LastFiveSecStrategy.FULL_COURT_PASS_SHOOT_3P;
+        }
+    }
+
+    getLast5SecStrategyRecommendation() {
+        const scoreDiff = this.cc.getScoreDiff();
+        const g = this.cc.teamGame.game;
+
+        if (g.gameClock >= 3 && g.gameClock <= 5) {
+            return this._last3To5SecStrategy(scoreDiff, g);
+        } else {
+            return this._last3SecStrategy(scoreDiff, g);
         }
     }
 }

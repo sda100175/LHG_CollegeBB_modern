@@ -182,3 +182,22 @@ offStrat(X): See OffensiveStrategy, Offensive strategy for selected team (X)
     8 = Hold Ball vs. Passive Zone (must be ahead, no shot clock)
     9 = Shoot Only 3s (last 3 min)
     
+=======================================================================================================================
+timePlayed(X, Y): Minutes played for player (Y) on team (X) 
+
+=======================================================================================================================
+impactTeam = 0 if neutral, 1 if home advantage
+
+=======================================================================================================================
+playerMode: Human/CPU control, see GameSettings.PlayerOption.  The values are different in HELLO, though:
+    0 = Human vs. Human
+    1 = CPU is either home (compTeam = 0), or visitor (compTeam = 1)
+    2 = CPU vs. CPU 
+
+=======================================================================================================================
+I1%: Seems like a close/late strategy option
+    'Values of I1%
+    '0 | 1 = Full Court Pass [Shoot 2 | Shoot 3]
+    '2 = Shoot from Back Court
+    '3 = TO from Half Court
+    '4 | 5 = Work the Floor [Shoot 3 | Shoot 2]

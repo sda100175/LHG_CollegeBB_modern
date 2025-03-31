@@ -17,6 +17,8 @@ describe('ComputerCoach', () => {
     beforeEach(() => {
         g = makeGame('90 DUKE', '90 GA TECH');
         cc = new ComputerCoach(g.homeTeamGame);
+        cc.setLineup();
+        cc.setStrategy();
         htg = g.homeTeamGame;
         p = <PlayerGame> htg.roster.find(pg => pg.player.name === 'D.SCOTT');
     });

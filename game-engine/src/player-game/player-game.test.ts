@@ -23,7 +23,14 @@ describe('PlayerGame', () => {
             expect(pg.offReb40Minx10).toEqual(32);
             expect(pg.isFouledOut).toEqual(false);
             expect(pg.isPlayingSafe).toEqual(false);
+            expect(pg.timePlayed).toEqual(0);
         });    
+
+        it('properly handles timePlayed', () => {
+            pg.addTimePlayed(20);
+            pg.addTimePlayed(5);
+            expect(pg.timePlayed).toEqual(25);
+        });
 
         it('properly handles contribPct', () => {
             expect(pg.contribPct).toEqual(22);

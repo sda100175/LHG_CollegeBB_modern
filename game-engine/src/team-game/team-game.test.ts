@@ -51,6 +51,14 @@ describe('TeamGame', () => {
             expect(rc.actives).toBeGreaterThanOrEqual(7);
         });
 
+        it('tracks fouls for half properly', () => {
+            expect(htg.foulsForHalf).toEqual(0);
+            htg.addFoulForHalf();
+            expect(htg.foulsForHalf).toEqual(1);
+            htg.resetFoulsForHalf();
+            expect(htg.foulsForHalf).toEqual(0);
+        });
+
         it('initializes foul draw ratings correctly', () => {
             // No foul draw adjustments here (stock teams use '99')
             g.gameSettings.threePtShots = false;  // avoid the 3pt adjustment for foulDrawRating here
@@ -69,6 +77,14 @@ describe('TeamGame', () => {
             }
         });
         
+        it('handles timeouts properly', () => {
+            expect(htg.timeouts).toEqual(5);
+            expect(htg.takeTimeout()).toEqual(true);
+            expect(htg.timeouts).toEqual(4);
+            for (let i = 0; i < 4; i++) { htg.takeTimeout() }
+            expect(htg.takeTimeout()).toEqual(false);
+        });
+
         describe('with a set lineup', () => {
             beforeEach(() => {
                 htg.lineup.push(htg.roster[0]);
@@ -90,8 +106,20 @@ describe('TeamGame', () => {
                 expect(htg.foulCommitRatingSum).toEqual(189);
             });
 
+            it('adds time played correctly', () => {
+                htg.addTimePlayed(5);
+                expect(htg.lineup[0].timePlayed).toEqual(5);
+                expect(htg.lineup[4].timePlayed).toEqual(5);
+                htg.lineup[4] = htg.roster[5];
+                htg.addTimePlayed(10);
+                expect(htg.lineup[0].timePlayed).toEqual(15);
+                expect(htg.lineup[4].timePlayed).toEqual(10);
+            });
+
             describe('checkLineup', () => {
                 it('reports no errors if lineup is valid', () => {
+                    console.log('<DBG> lineup should be valud but here it is: ', 
+                        htg.lineup.map(pg => `${pg.player.name} inactive=${pg.isInactive}`));
                     expect(() => htg.checkLineup()).not.toThrow();
                 });
     

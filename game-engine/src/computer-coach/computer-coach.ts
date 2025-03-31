@@ -1,6 +1,5 @@
 import { Game } from "../game/game";
 import { PlayerGame } from "../player-game/player-game";
-import { DefensiveStrategy } from "../shared/strategy-helper";
 import { TeamGame } from "../team-game/team-game";
 import { DefensiveCoach } from "./defensive-coach/defensive-coach";
 import { OffensiveCoach } from "./offensive-coach/offensive-coach";
@@ -96,7 +95,6 @@ export class ComputerCoach {
     constructor(public teamGame: TeamGame) {
         this.defCoach = new DefensiveCoach(this);
         this.offCoach = new OffensiveCoach(this);
-        this.makeCoachingDecisions();
     }
 
     // Make lineup out by who has most contribution left. Can avoid players in foul trouble or players "over-contributing"
@@ -128,11 +126,6 @@ export class ComputerCoach {
         }
 
         return lineup;
-    }
-
-    makeCoachingDecisions() {
-        this.setLineup();
-        this.setStrategy();
     }
 
     getOpposingTeamGame() {
@@ -172,6 +165,13 @@ export class ComputerCoach {
         this.teamGame.offStrategy = this.offCoach.getStrategyRecommendation();        
     }
 
+    /**
+     * Set computer coach strategy for a "last 5 second and trailing by one score" situation.
+     */
+    setLast5SecSituationStrategy() {
+        this.teamGame.last5SecStrategy = this.offCoach.getLast5SecStrategyRecommendation();
+    }
+        
     /**
      * Used for testing or debugging only, exposes some private implementation details.
      */

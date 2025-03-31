@@ -10,6 +10,7 @@ import { TeamGame } from "../team-game/team-game";
 export class PlayerGame {
     private _game: Game;  // convienence
     private _time = 1200;  // goes backward, starts at 20 min / 1,200 sec
+    private _timePlayed = 0;
     private _adjContribPct = -1;
     private _adjFoulDrawRating = -1;
     private _isPlayingSafe = false;
@@ -95,9 +96,10 @@ export class PlayerGame {
     get foulDrawRating() {
         let rating = this._getBaseFoulDrawRating();
         rating = this._adjustFoulDrawRatingForGameStamina(rating);
-                
-        // LHCCB made a strange adjustment to this based on 3-pt shot propensity.
-        // I'm not sure why it did this, but re-creating it here.
+
+        // LHCCB made an adjustment (up) to this based on 3-pt shot propensity.
+        // I'm guessing it does this to raise foul likelhood on 2 point shots from
+        // players that took a lot of 3's that don't cause fouls frequently.
         if (this._game.gameSettings.threePtShots) {
             const twoPtAttPct = 100 - this.fg3OfTotalFgAtt;
             if (twoPtAttPct > 0) {
@@ -140,6 +142,17 @@ export class PlayerGame {
      * Offensive rebounding prowess
      */
     get offReb40Minx10() { return this.player.offReb40Minx10 }
+
+    /**
+     * Returns time played in seconds.
+     */
+    get timePlayed() { return this._timePlayed }
+
+    /**
+     * Adds time in game for the player.
+     * @param seconds Time played in seconds.
+     */
+    addTimePlayed(seconds: number) { this._timePlayed += seconds; }
 
     /**
      * Is this player eligible to "play safe"?

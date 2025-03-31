@@ -1,7 +1,8 @@
+import { ComputerCoach } from "../computer-coach/computer-coach";
 import { Game } from "../game/game";
 import { PlayerGame } from "../player-game/player-game";
 import { Player } from "../player/player";
-import { DefensiveStrategy, OffensiveStrategy } from "../shared/strategy-helper";
+import { DefensiveStrategy, LastFiveSecStrategy, OffensiveStrategy } from "../shared/strategy-helper";
 import { Stats } from "../stats/stats";
 import { Team } from "../team/team";
 import { Rand100 } from "../util";
@@ -24,14 +25,20 @@ export class LineupError extends Error {
 }
 
 export class TeamGame {
+    private _foulsForHalf = 0;
+    private _timeouts = 5;
+    private _coach: ComputerCoach | null = null;
+    
     roster: PlayerGame[] = [];
     lineup: PlayerGame[] = [];
     defStrategy = DefensiveStrategy.SOLID_MTM;
     offStrategy = OffensiveStrategy.NORMAL;
+    last5SecStrategy = LastFiveSecStrategy.NONE;
     
     constructor(public team: Team, public control: TeamGameControl, public game: Game) {
         this._initRoster();
         this._adjustContribPct(game.gameAvgStamina);
+        this._coach = (control === TeamGameControl.CPU) ? new ComputerCoach(this) : null;
     }
 
     private _checkIfInactive(p: Player) {
@@ -85,6 +92,11 @@ export class TeamGame {
     }
 
     /**
+     * Add a team foul for the half.
+     */
+    addFoulForHalf() { this._foulsForHalf++ }
+
+    /**
      * Check lineup for validity. Used to validate human coach moves.
      * @throws {LineupError} Error explaining a problem with the lineup.
      */
@@ -103,6 +115,11 @@ export class TeamGame {
             throw new LineupError(LineupErrorCode.INVALID_PLAYER);
         }
     }
+
+    /**
+     * Reset the fouls for half to zero.
+     */
+    resetFoulsForHalf() { this._foulsForHalf = 0 }
 
     /**
      * Adjusted pace (FGA per game adjusted for league)
@@ -165,6 +182,11 @@ export class TeamGame {
     }
 
     /**
+     * Number of fouls committed for current half.
+     */
+    get foulsForHalf() { return this._foulsForHalf }
+
+    /**
      * Offensive turnovers propensity
      */
     get offTurnoverRating() {
@@ -194,7 +216,58 @@ export class TeamGame {
     get stats() { return Stats.compile(this.roster.map(pg => pg.stats)) }
 
     /**
+     * Get timeouts left.
+     */
+    get timeouts() { return this._timeouts }
+
+    /**
      * Team year
      */
     get year() { return this.team.year }
+
+    /**
+     * Add time to time played by current lineup.
+     * @param elapsed Time played by current lineup
+     */
+    addTimePlayed(elapsed: number) { this.lineup.forEach(pg => pg.addTimePlayed(elapsed)) }
+
+    /**
+     * Sets strategy if computer-controlled.
+     */
+    setStrategy() { 
+        if (this._coach) {
+            this._coach.setStrategy();
+        }
+    }
+    
+    /**
+     * Sets lineup (subs) if computer-controlled.
+     */
+    setLineup() { 
+        if (this._coach) {
+            this._coach.setLineup();
+        }
+    }
+
+    /**
+     * Sets last 5 second and close strategy.
+     */
+    setLast5SecStrategy() {
+        if (this._coach) {
+            this._coach.setLast5SecSituationStrategy();
+        }
+    }
+
+    /**
+     * Use a timeout
+     * @returns {boolean} True if a timeout was taken, false if team was out of timeouts.
+     */
+    takeTimeout() {
+        if (this._timeouts === 0) {
+            return false;
+        } else {
+            this._timeouts--;
+            return true;
+        }
+    }
 }

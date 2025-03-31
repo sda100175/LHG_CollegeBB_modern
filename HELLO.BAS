@@ -1270,7 +1270,6 @@ Sub COLHOOP ()
             Call PlayItSafe
         End If
 
-        ' =====> CURSOR 1 <=====
         If threePtOpt = 1 Then
 
             'Adjust foul draw rating based on 3-pt contributions??
@@ -1291,7 +1290,8 @@ Sub COLHOOP ()
                 ' MCCOY base foulDrawRating = 9, adjusted = (9 * 2.86) = 25.74
                 ' MASSENBURG base foulDrawRating = 14, adjusted = (14 * 1) = 14
                 
-                ' I'm not exactly sure why the game makes this adjustment, it doesn't make logical sense to me.
+                ' I'm guessing the game makes this adjustment because it calculates fouls on shot attempts only, and 
+                ' likely has logic that makes 3pt shot fouls pretty rare (which they are)
             Next I
 
         End If
@@ -1315,12 +1315,14 @@ Sub COLHOOP ()
         impactTeam = gameLoc
     End If
 
+    ' The GOTO 250 is a pseudo-game loop marker
     250 '
     'Jump Ball !!!
     Select Case currHalf
 
         Case 1
             jumpBall = Int(Rnd(1) * 2)
+            ' P = possession, D = defense
             P = jumpBall
             D = 1 - P
         
@@ -1339,11 +1341,11 @@ Sub COLHOOP ()
 
     Call SCOREBOARD
 
-    Call LASTSHOT
+    Call LASTSHOT  ' I did not implement this yet
     Call CheckGameClock
     If gameClock! = 0 Then 170
 
-    Call ResetShotClock
+    Call ResetShotClock  ' this does something important in setting shotChance, may need to come back to this
 
     '----------------------------------------
     '                Tip Off!
@@ -1368,6 +1370,7 @@ Sub COLHOOP ()
 
     '----- NOODLE -----
 
+    ' GOTO 170 is used to end a half or the game.
     170 '
     Erase defStrat, defCoverage, defCategory
 
@@ -1584,10 +1587,10 @@ Sub COLHOOP ()
 
     '----- NOODLE -----
 
-    300 '
-    ' ### LAST SECONDS OF GAME ###
+    300 '### LAST SECONDS OF GAME ###
 
     'Last 5 secs, no timeout, offense is ahead
+    'STEVE: I did not cover this condition yet, I'm wondering why you wouldn't just foul if it was close?
     If gameClock! <= 5 And timeouts(D) <= 0 And score(P, 0) > score(D, 0) Then
 
         timeElapsed! = gameClock!
@@ -1610,6 +1613,7 @@ Sub COLHOOP ()
 
     scoreDiffOp = score(D, 0) - score(P, 0)
 
+    ' =====> CURSOR 1 <=====
     'Last 5 seconds, down by 1 score!!!
     If gameClock! <= 5 And (threePtOpt = 1 And scoreDiffOp <= 3 Or threePtOpt = 0 And scoreDiffOp <= 2) And scoreDiffOp >= 0 And currHalf >= 2 Then
 

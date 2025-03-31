@@ -1,6 +1,59 @@
+import { Game } from "../game/game";
 import { DefensiveStrategy, HalfCourtDefense, PressType, StrategyHelper } from "./strategy-helper";
+import teamData from "../../test_data/TeamData.1990.json";
+import { Team } from "../team/team";
+import { GameSettings } from "../game-settings/game-settings";
+import * as utils from "../util";
 
 describe('StrategyHelper', () => {
+    describe('isLast5SecSituation', () => {
+        let g: Game;
+        let vt: Team, ht: Team;
+
+        beforeEach(() => {
+            vt = Team.fromObject(teamData['90 DUKE']);
+            ht = Team.fromObject(teamData['90 MARYLAND']);
+            g = new Game(new GameSettings(), vt, ht);    
+            jest.spyOn(utils, 'Rand1').mockReturnValue(0); // ensures visitor is on offense
+            g.start();
+        });
+
+        it('returns false when game is not within last 5 seconds', () => {
+            expect(StrategyHelper.isLast5SecSituation(g)).toEqual(false);
+        });
+
+        describe('and within last 5 seconds of the game', () => {
+            beforeEach(() => g.setGameClock(2, 4));
+
+            it('returns false if offensive team is winning', () => {
+                g.visitorTeamGame.lineup[0].stats.pointsScored = 1;
+                expect(StrategyHelper.isLast5SecSituation(g)).toEqual(false);
+            });
+
+            it('returns false if three point shot is on, and losing by more than 3', () => {
+                g.homeTeamGame.lineup[0].stats.pointsScored = 4;
+                expect(StrategyHelper.isLast5SecSituation(g)).toEqual(false);
+            });
+
+            it('returns false if three point shot is off, and losing by more than 2', () => {
+                g.gameSettings.threePtShots = false;
+                g.homeTeamGame.lineup[0].stats.pointsScored = 3;
+                expect(StrategyHelper.isLast5SecSituation(g)).toEqual(false);
+            });
+
+            it('returns true if three point shot is on, and losing by 3 or less', () => {
+                g.homeTeamGame.lineup[0].stats.pointsScored = 3;
+                expect(StrategyHelper.isLast5SecSituation(g)).toEqual(true);
+            });
+
+            it('returns true if three point shot is off, and losing by 2 or less', () => {
+                g.gameSettings.threePtShots = false;
+                g.homeTeamGame.lineup[0].stats.pointsScored = 2;
+                expect(StrategyHelper.isLast5SecSituation(g)).toEqual(true);
+            });
+        });
+    });
+
     describe('getPressType', () => {
         it('correctly identifies TOKEN press', () => {
             expect(StrategyHelper.getPressType(DefensiveStrategy.FCP_SOLID_MTM)).toEqual(PressType.TOKEN);

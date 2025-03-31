@@ -1,5 +1,7 @@
 // Various type definitions and some support functions around offensive and defensive strategies.
 
+import { Game } from "../game/game";
+
 export enum OffensiveStrategy {
     NORMAL = 0,
     AGGRESSIVE = 1,
@@ -50,7 +52,38 @@ export enum HalfCourtDefense {
     TRAPPING_ZONE = 3
 }
 
+export enum LastFiveSecStrategy {
+    NONE = 0,
+    FULL_COURT_PASS_SHOOT_2P = 1,
+    FULL_COURT_PASS_SHOOT_3P = 2,
+    SHOOT_FROM_BACK_COURT = 3,
+    TIME_OUT_AT_HALF_COURT = 4,
+    WORK_FLOOR_SHOOT_2P = 5,
+    WORK_FLOOR_SHOOT_3P = 6
+}
+
 export class StrategyHelper {
+    /**
+     * 
+     * @param {Game} g Game to examine
+     * @returns {boolean} true if a "last 5 second down by 1 score" situation, false otherwise.
+     */
+    public static isLast5SecSituation(g: Game) {
+        const fiveSecOrLess = (g.gameClock <= 5);
+        const scoreDiff = g.getScoreDiff();
+
+        if (fiveSecOrLess
+            && g.currHalf >= 2
+            && scoreDiff < 0
+            && ((g.gameSettings.threePtShots && scoreDiff >= -3)
+                || (g.gameSettings.threePtShots === false && scoreDiff >= -2))
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public static getHalfCourtDefense(strat: DefensiveStrategy) {
         switch (strat) {
             case DefensiveStrategy.PRESSURE_MTM:
