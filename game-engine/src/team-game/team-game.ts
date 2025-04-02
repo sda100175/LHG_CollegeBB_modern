@@ -5,7 +5,7 @@ import { Player } from "../player/player";
 import { DefensiveStrategy, LastFiveSecStrategy, OffensiveStrategy } from "../shared/strategy-helper";
 import { Stats } from "../stats/stats";
 import { Team } from "../team/team";
-import { Rand100 } from "../util";
+import { Rand, Rand100 } from "../util";
 
 export enum TeamGameControl {
     CPU = 0,
@@ -230,6 +230,43 @@ export class TeamGame {
      * @param elapsed Time played by current lineup
      */
     addTimePlayed(elapsed: number) { this.lineup.forEach(pg => pg.addTimePlayed(elapsed)) }
+
+    /**
+     * @param shooter Player that shot the ball
+     * @returns {PlayerGame | null} Player to credit with assist, or null if no assist.
+     */
+    getAssistPlayer(shooter: PlayerGame) {
+        const assistPlayer = this.getRandomLineupPlayer();
+
+        // Picked same player as shooter, no assist.
+        if (assistPlayer === shooter) { return null }
+
+        // Calculate likelihood of assist based on assist rating
+        let assistChance = 0;
+        if (assistPlayer.assistRating === 0) {
+            assistChance = Rand(4);
+        } else if (assistPlayer.assistRating === 1 || assistPlayer.assistRating === 2) {
+            assistChance = Rand(3);
+        } else if (assistPlayer.assistRating === 3 || assistPlayer.assistRating === 4) {
+            assistChance = Rand(2);
+        } else {
+            assistChance = Rand(assistPlayer.assistRating * 0.8);
+        }
+
+        if (assistChance < assistPlayer.assistRating 
+            || (assistPlayer.assistRating > 4 && assistChance < (assistPlayer.assistRating - 3))
+        ) {
+            // Credit the assist
+            return assistPlayer;
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * @returns {PlayerGame} Random player currently in the lineup.
+     */
+    getRandomLineupPlayer() { return this.lineup[Rand(4)] }
 
     /**
      * Sets strategy if computer-controlled.

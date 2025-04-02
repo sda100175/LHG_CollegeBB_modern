@@ -10,10 +10,13 @@ export enum PlayType {
     END_OF_GAME = 4,
     FG_MADE_2PT = 5,
     FG_MISS_2PT = 6,
-    LAST_5_SEC_SITUATION = 7,       // 5 or less seconds left and offensive team down by one score or less
-    L5S_LONG_PASS_INTERCEPTED = 8,  // last play was a long inbounds intercepted, time expired
-    L5S_FG_MADE_BACKCOURT_2PT = 9,  // last play was a long 2pt from the back court
-    L5S_FG_MADE_BACKCOURT_3PT = 10  // last play was a long 3pt from the back court
+    LAST_5_SEC_SITUATION = 7,        // 5 or less seconds left and offensive team down by one score or less
+    L5S_LONG_PASS_INTERCEPTED = 8,   // last play was a long inbounds intercepted, time expired
+    L5S_FG_MADE_BACKCOURT_2PT = 9,   // last play was a long 2pt from the back court, time expired
+    L5S_FG_MADE_BACKCOURT_3PT = 10,  // last play was a long 3pt from the back court, time expired
+    L5S_FG_MISS_BACKCOURT_2PT = 11,  // last play was a long 2pt miss from the back court, time expired
+    L5S_FG_MISS_BACKCOURT_3PT = 12,  // last play was a long 3pt miss from the back court, time expired
+    L5S_TURNOVER = 13                // last play resulted in a turnover, time expired
 }
 
 /**
@@ -58,12 +61,16 @@ export class Play {
                 this._stats.pointsScored = 2;
                 break;
             case PlayType.FG_MISS_2PT:
+            case PlayType.L5S_FG_MISS_BACKCOURT_2PT:
                 this._stats.fieldGoalsAtt = 1;
                 break;
             case PlayType.L5S_FG_MADE_BACKCOURT_3PT:
                 this._stats.fieldGoals3PtAtt = 1;
                 this._stats.fieldGoals3PtMade = 1;
                 this._stats.pointsScored = 3;
+                break;
+            case PlayType.L5S_FG_MISS_BACKCOURT_3PT:
+                this._stats.fieldGoals3PtAtt = 1;
                 break;
             default:
                 break;  // This type has no associated stats to record.

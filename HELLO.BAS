@@ -1700,7 +1700,6 @@ Sub COLHOOP ()
 
         End If
 
-        ' =====> CURSOR 1 <=====
         If I1% = 2 Then
 
             rndFtLine = Int(Rnd(1) * 45) + 45
@@ -1741,7 +1740,6 @@ Sub COLHOOP ()
                 Call UPDATESCREEN
 
             Else
-
                 pbpString$ = "SHOT MISSES...GAME OVER"
                 Call PBP(P)
 
@@ -1779,6 +1777,8 @@ Sub COLHOOP ()
 
         End If
 
+        ' =====> CURSOR 1 <=====
+        ' timeout at half court strategy is I1% = 3
         If I1% = 3 Then
 
             If gameClock! < 1.5 Then

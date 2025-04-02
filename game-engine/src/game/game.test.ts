@@ -87,8 +87,8 @@ describe('Game', () => {
             jest.spyOn(utils, 'Rand1').mockReturnValue(0);
             const ge = g.start();
             expect(ge.type).toEqual(PlayType.JUMP_BALL);
-            expect(ge.team).toEqual(g.visitorTeamGame);
-            expect(ge.player).toBeNull();
+            expect(ge.data.team).toEqual(g.visitorTeamGame);
+            expect(ge.data.player).toBeUndefined();
             expect(g.possArrow).toEqual(g.homeTeamGame);
             expect(g.gameClock).toEqual(1199);
             expect(g.shotClock).toEqual(29);
@@ -108,8 +108,8 @@ describe('Game', () => {
             jest.spyOn(utils, 'Rand1').mockReturnValue(1);
             const ge = g.start();
             expect(ge.type).toEqual(PlayType.JUMP_BALL);
-            expect(ge.team).toEqual(g.homeTeamGame);
-            expect(ge.player).toBeNull();
+            expect(ge.data.team).toEqual(g.homeTeamGame);
+            expect(ge.data.player).toBeUndefined();
             expect(g.possArrow).toEqual(g.visitorTeamGame);
         });
 

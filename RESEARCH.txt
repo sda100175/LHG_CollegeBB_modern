@@ -67,6 +67,7 @@ plyrOff_GAME!(X,Y,Z):
         plyrOff_GAME!(X,Y,8)  = PlayerGame.stats.fieldGoalsMade
         plyrOff_GAME!(X,Y,11) = PlayerGame.stats.totalRebounds
         plyrOff_GAME!(X,Y,12) = PlayerGame.stats.personalFouls
+        plyrOff_GAME!(X,Y,14) = PlayerGame.stats.assists
         
         plyrOff_GAME!(X,Y,16) = PlayerGame.foulDrawRating
         plyrOff_GAME!(X,Y,17) = PlayerGame.foulCommitRating

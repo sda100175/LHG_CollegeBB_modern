@@ -23,8 +23,8 @@ describe('PlayByPlay', () => {
         });
 
         it('returns last play if plays added', () => {
-            pbp.addPlay(new Play(PlayType.JUMP_BALL, g.visitorTeamGame, null, 1));
-            pbp.addPlay(new Play(PlayType.END_OF_HALF, null, null, 0));
+            pbp.addPlay(new Play(PlayType.JUMP_BALL, { team: g.visitorTeamGame, timeElapsed: 1 }));
+            pbp.addPlay(new Play(PlayType.END_OF_HALF, {}));
             const p = pbp.lastPlay();
             expect(p?.type).toEqual(PlayType.END_OF_HALF);
         });

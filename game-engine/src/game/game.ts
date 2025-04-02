@@ -1,10 +1,11 @@
 import { GameLocation, GameSettings, PlayerOption, ShotClockOption } from "../game-settings/game-settings";
 import { TeamGame, TeamGameControl } from "../team-game/team-game";
 import { Team } from "../team/team";
-import { Rand1 } from "../util";
+import { Rand, Rand1 } from "../util";
 import { Play, PlayType } from "../play/play";
 import { PlayByPlay } from "../play-by-play/play-by-play";
 import { StrategyHelper } from "../shared/strategy-helper";
+import { PlayerGame } from "../player-game/player-game";
 
 /**
  * Game object is the main game engine class. Sets up and executes a game of college basketball. 
@@ -243,6 +244,7 @@ export class Game {
         }
 
         // LEFT OFF HERE!!!
+        return new Play(PlayType.NO_OP, {});
     }
 
     /**

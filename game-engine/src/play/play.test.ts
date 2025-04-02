@@ -142,4 +142,63 @@ describe('Play', () => {
             expect(ge.subsAllowed).toEqual(false);
         });
     });
+
+    describe('L5S_FG_MISS_BACKCOURT_2PT', () => {
+        beforeEach(() => {
+            ge = new Play(PlayType.L5S_FG_MISS_BACKCOURT_2PT, { 
+                team: g.homeTeamGame,
+                player: pg,
+                timeElapsed: 2
+            })
+        });
+
+        it('records stats', () => {
+            expect(ge.stats.fieldGoalsAtt).toEqual(1);
+            expect(ge.stats.fieldGoalsMade).toEqual(0);
+            expect(ge.stats.pointsScored).toEqual(0);
+            expect(ge.stats.assists).toEqual(0);
+            expect(pg.stats.fieldGoalsAtt).toEqual(1);
+            expect(pg.stats.fieldGoalsMade).toEqual(0);
+            expect(pg.stats.pointsScored).toEqual(0);
+            expect(g.homeTeamGame.roster[1].stats.assists).toEqual(0);
+        });
+
+        it('disallows coaching', () => {
+            expect(ge.coachingAllowed).toEqual(false);
+        });
+
+        it('disallows subs', () => {
+            expect(ge.subsAllowed).toEqual(false);
+        });
+    });
+
+    describe('L5S_FG_MISS_BACKCOURT_3PT', () => {
+        beforeEach(() => {
+            ge = new Play(PlayType.L5S_FG_MISS_BACKCOURT_3PT, { 
+                team: g.homeTeamGame,
+                player: pg,
+                timeElapsed: 2
+            })
+        });
+
+        it('records stats', () => {
+            expect(ge.stats.fieldGoals3PtAtt).toEqual(1);
+            expect(ge.stats.fieldGoals3PtMade).toEqual(0);
+            expect(ge.stats.pointsScored).toEqual(0);
+            expect(ge.stats.assists).toEqual(0);
+            expect(pg.stats.fieldGoals3PtAtt).toEqual(1);
+            expect(pg.stats.fieldGoals3PtMade).toEqual(0);
+            expect(pg.stats.pointsScored).toEqual(0);
+            expect(g.homeTeamGame.roster[1].stats.assists).toEqual(0);
+        });
+
+        it('disallows coaching', () => {
+            expect(ge.coachingAllowed).toEqual(false);
+        });
+
+        it('disallows subs', () => {
+            expect(ge.subsAllowed).toEqual(false);
+        });
+    });
+
 });

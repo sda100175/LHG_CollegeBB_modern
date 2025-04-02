@@ -22,6 +22,11 @@ export class PlayerGame {
     }
 
     /**
+     * Assist rating
+     */
+    get assistRating() { return this.player.assistRating }
+
+    /**
      * Contribution rate
      */
     get contribPct() { return (this._adjContribPct >= 0) ? this._adjContribPct : this.player.contribPct }

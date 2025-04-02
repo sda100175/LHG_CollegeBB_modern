@@ -102,6 +102,22 @@ describe('TeamGame', () => {
                 expect(htg.defFGPctAdj).toEqual(-1);
             });    
 
+            it('returns random players from the lineup', () => {
+                for (let i = 0; i < 10; i++) {
+                    expect(htg.getRandomLineupPlayer()).not.toBeFalsy();
+                }
+            });
+
+            it('returns assist players or null if no assist', () => {
+                for (let i = 0; i < 10; i++) {
+                    const shooter = htg.getRandomLineupPlayer();
+                    const assist = htg.getAssistPlayer(shooter);
+                    if (assist !== null) {  // null is valid
+                        expect(assist).not.toEqual(shooter);
+                    }
+                }
+            });
+
             it('calculates foulCommitRatingSum properly', () => {
                 expect(htg.foulCommitRatingSum).toEqual(189);
             });
